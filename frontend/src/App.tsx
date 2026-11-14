@@ -197,7 +197,9 @@ export default function App() {
           <div className="flex items-center gap-2">
             <Moon size={20} className="text-slate-200" />
             <div>
-              <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">Lunar Landing Site Navigator</h1>
+              <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">
+                AetherRidge <span className="hidden font-normal text-slate-400 min-[520px]:inline">· 3D Horizon & Libration Navigator for Artemis</span>
+              </h1>
               <p className="text-[10px] text-slate-500 hidden sm:block">
                 Sun & Earth vs. the real lunar horizon · NASA JPL Horizons ephemeris · LRO LOLA {index?.dem.pixel_m ?? 80} m terrain
               </p>
@@ -353,7 +355,11 @@ export default function App() {
 
           <footer className="pt-2 pb-6 text-[10px] text-slate-600 flex items-center gap-1.5">
             <Satellite size={11} />
-            Data generated {index?.generated_utc ?? "…"} · {index?.ephemeris_source} · horizon ray-trace {index?.trace_km} km, observer mast {index?.observer_mast_m} m · NASA Space Apps 2026
+            <span>
+              Data generated {index?.generated_utc ?? "…"} · {index?.ephemeris_source} · horizon ray-trace {index?.trace_km} km, observer mast {index?.observer_mast_m} m · NASA Space Apps 2026 · Team Akasha Solo ·
+              Code written with AI assistance (Claude, Anthropic); all data from NASA LOLA & JPL Horizons —{" "}
+              <a href="https://github.com/qinchanpang-afk/lunar-landing-navigator#use-of-super-intelligence-si--ai-disclosure" target="_blank" rel="noreferrer" className="underline hover:text-slate-400">disclosure & references</a>
+            </span>
           </footer>
         </main>
       </div>
