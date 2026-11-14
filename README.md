@@ -1,4 +1,4 @@
-# AetherRidge — 3D Horizon & Libration Navigator for Artemis
+# AetherRidge — Sun & Earth Line-of-Sight Navigator for Lunar South Pole Landings
 
 **Compare lunar landing sites and dates by power and comms. Every result comes from the real Sun and Earth positions measured against the real lunar skyline.**
 
@@ -17,6 +17,8 @@ This app answers that interactively, from precomputed data with no API latency. 
 | | |
 |---|---|
 | **360° horizon panorama** | The real skyline from LOLA altimetry, with the Sun and Earth plotted at their apparent positions. ±15-day tracks show the Sun circling the horizon and Earth's libration loop. Hover for the terrain elevation and its distance at any azimuth. |
+| **3D terrain with live shadows** | Real LOLA 80 m terrain (±5 or ±10 km, 1–3× relief, lunar curvature included) rendered with three.js and lit by the Sun at the selected time, with shadow mapping. The site's 100 km ray-traced skyline is drawn as a ring, so you can see both the local shadows and the distant ridge that actually decides power at the site. |
+| **First-screen answer** | A status card answers the core question immediately (solar power ON/OFF with time to sunset or sunrise, Earth link ON/OFF with time to Earthset or Earthrise, 2-year sunlight / DTE / longest night) and four *Start here* buttons jump straight into the key scenarios. |
 | **Sky dome** | Top-down sky map (zenith at centre) with the terrain mask as a ring, plus the Sun and Earth paths. |
 | **Countdowns** | Exact time remaining before **sunset (power loss)** and **Earthset (communication loss)**, or until the next sunrise or Earthrise. Crossing times are interpolated below the 2-hour data step. |
 | **Power & comms assessment** | Solar elevation, clearance above terrain, power efficiency (flat panel `sin(el)` and vertical sun-tracking panel `cos(el)`), sunlight %, DTE %, longest continuous shadow (the battery-survival driver), longest DTE blackout. |
@@ -202,7 +204,7 @@ JPL Horizons does not send CORS headers, so custom-coordinate requests go to the
 ├── frontend/
 │   ├── public/data/           # sites_index.json, <site>.json, validation_report.json, dem/, basemap/
 │   └── src/
-│       ├── components/        # Panorama, SkyDome, Timeline, CompareView, PoleMap, NearbyScan, MissionPlanner, ValidationPanel, …
+│       ├── components/        # Panorama, Terrain3D, NowCard, SkyDome, Timeline, CompareView, PoleMap, NearbyScan, MissionPlanner, ValidationPanel, …
 │       └── lib/               # time engine, Horizons client, DEM ray-tracer (+ worker), nearby scan, planner, URL state, storage
 └── docs/                      # challenge brief, Horizons API notes
 ```
@@ -258,7 +260,7 @@ In line with the Space Apps rules on SI use:
 
 **Software (open source)**
 * Python: NumPy, rasterio (GDAL), pyproj (PROJ), requests, Pillow
-* Web: React 18, Vite 5, TypeScript 5, Tailwind CSS 3, Recharts 2, Lucide icons (lucide-react), PostCSS / Autoprefixer
+* Web: React 18, Vite 5, TypeScript 5, Tailwind CSS 3, Recharts 2, three.js, Lucide icons (lucide-react), PostCSS / Autoprefixer
 * Fonts: Inter and JetBrains Mono via Google Fonts
 * Hosting: Vercel (static site + Horizons proxy rewrite)
 * AI assistant: Claude (Anthropic) via Claude Code — see the disclosure above
@@ -272,4 +274,4 @@ In line with the Space Apps rules on SI use:
 * **Canadian Space Agency (CSA)**: Space Apps 2026 partner agency. Its Moon exploration resources (<https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/>), including the Canadian utility rover programme and Canada's role in Artemis, informed the CSA rover-target scenario used in this app.
 * **NASA Space Apps Challenge** organisers, for the *Lunar Landing Site Navigator* challenge and its curated resources.
 
-Built with Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow) and Vite + React + TypeScript + Tailwind CSS + Recharts + Lucide.
+Built with Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow) and Vite + React + TypeScript + Tailwind CSS + Recharts + three.js + Lucide.

@@ -20,9 +20,11 @@ function ramp(t: number): string {
 interface Props {
   site: SiteDetail;
   onAddCustom: (lat: number, lon: number, name: string) => void;
+  /** external request to scan straight away (first-screen "Find a better spot") */
+  autoRun?: { siteId: string; half: number; nonce: number } | null;
 }
 
-export default function NearbyScan({ site, onAddCustom }: Props) {
+export default function NearbyScan({ site, onAddCustom, autoRun }: Props) {
   const [half, setHalf] = useState(1000);
   const [metric, setMetric] = useState<Metric>("sunPct");
   const [safeOnly, setSafeOnly] = useState(true);
@@ -41,6 +43,19 @@ export default function NearbyScan({ site, onAddCustom }: Props) {
     setErr(null);
     setHover(null);
   }, [site.id, half]);
+
+  const pendingAuto = useRef<number | null>(null);
+  useEffect(() => {
+    if (!autoRun) return;
+    pendingAuto.current = autoRun.nonce;
+    setHalf(autoRun.half);
+  }, [autoRun?.nonce]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Fires after the reset effect above, once the requested site and area are in place.
+  useEffect(() => {
+    if (pendingAuto.current == null || !autoRun || site.id !== autoRun.siteId || half !== autoRun.half) return;
+    pendingAuto.current = null;
+    run();
+  }); // eslint-disable-line react-hooks/exhaustive-deps
 
   const run = async () => {
     abort.current?.abort();

@@ -5,7 +5,7 @@
 ---
 
 ## Project name
-AetherRidge — 3D Horizon & Libration Navigator for Artemis
+AetherRidge — Sun & Earth Line-of-Sight Navigator for Lunar South Pole Landings
 
 ## Team
 Akasha Solo
@@ -31,6 +31,8 @@ AetherRidge is a web app that shows, for any landing site and any moment in 2026
 ## Project details
 
 ### What it does
+* **3D terrain with live shadows** — real LOLA terrain around the site rendered in 3D and lit by the Sun at the chosen time, with the 100 km skyline ring that decides power at the site.
+* **First-screen answer** — "Is there power? Is there a link to Earth? For how long?" answered at a glance, with one-click demo scenarios.
 * **360° horizon panorama and sky dome** — the real skyline from LOLA altimetry with the Sun and Earth at their apparent positions and ±15-day tracks (Earth's libration loop is visible).
 * **Countdowns** — time to the next sunset (power loss) and Earthset (communications loss), interpolated below the 2-hour data step.
 * **Power & comms statistics** — sunlight %, Direct-to-Earth (DTE) %, longest shadow, longest DTE blackout, flat-panel and vertical sun-tracking panel efficiency.
@@ -61,7 +63,7 @@ Mission planners can screen sites, dates and contingencies in seconds instead of
 A quick-look tool that complements QuickMap and Moon Trek: answering "what if we land here instead, or two weeks later?" before a detailed engineering study. Next steps: full 18.6-year illumination statistics, Sun-disc partial occlusion, and a link budget for relay satellites.
 
 ### Tools, languages and software
-Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow); TypeScript, React, Vite, Tailwind CSS, Recharts, Lucide icons; Web Workers; Vercel hosting with a same-origin proxy for the Horizons API; Git/GitHub.
+Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow); TypeScript, React, Vite, Tailwind CSS, Recharts, three.js, Lucide icons; Web Workers; Vercel hosting with a same-origin proxy for the Horizons API; Git/GitHub.
 
 ---
 
@@ -85,7 +87,7 @@ The problem framing, physics rules (no refraction, 100 km curvature-corrected ho
 * Park, R. S. et al. (2021). The JPL Planetary and Lunar Ephemerides DE440 and DE441. *The Astronomical Journal* 161, 105.
 * Gläser, P. et al. (2014). Illumination conditions at the lunar south pole using high resolution Digital Terrain Models from LOLA. *Icarus* 243, 78–90.
 * Mazarico, E. et al. (2011). Illumination conditions of the lunar polar regions using LOLA topography. *Icarus* 211, 1066–1081.
-* Open-source software: NumPy, rasterio/GDAL, pyproj/PROJ, requests, Pillow, React, Vite, TypeScript, Tailwind CSS, Recharts, Lucide, PostCSS/Autoprefixer; fonts Inter and JetBrains Mono (Google Fonts); hosting Vercel.
+* Open-source software: NumPy, rasterio/GDAL, pyproj/PROJ, requests, Pillow, React, Vite, TypeScript, Tailwind CSS, Recharts, three.js, Lucide, PostCSS/Autoprefixer; fonts Inter and JetBrains Mono (Google Fonts); hosting Vercel.
 * AI assistant: Claude (Anthropic), via Claude Code (see Use of SI).
 
 ---

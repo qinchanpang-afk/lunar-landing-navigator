@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Check, Columns2, Compass, GraduationCap, Link as LinkIcon, Map as MapIcon, Moon, Satellite, Wrench } from "lucide-react";
 import { registerSite, useIndex, useSite } from "./lib/data";
 import { clearCustomSites, loadCustomSites, removeCustomSite } from "./lib/storage";
 import type { Audience, SiteMeta } from "./lib/types";
 import CustomSiteForm, { type SiteRequest } from "./components/CustomSiteForm";
 import PoleMap from "./components/PoleMap";
+import NowCard, { type StartAction } from "./components/NowCard";
 import NearbyScan from "./components/NearbyScan";
 import MissionPlanner from "./components/MissionPlanner";
 import ValidationPanel from "./components/ValidationPanel";
@@ -23,6 +24,11 @@ import Explainer from "./components/Explainer";
 const T0_MS = Date.parse("2026-01-01T00:00Z");
 const DEFAULT_SPAN_H = 17518;
 const URL0 = readUrl();
+// three.js is large: load the 3D view only when it is opened.
+const Terrain3D = lazy(() => import("./components/Terrain3D"));
+
+const SECTIONS: [string, string][] = [["sky", "Sky & 3D"], ["status", "Power & comms"], ["timeline", "Timeline"], ["plan", "Mission plan"], ["nearby", "Nearby scan"], ["stats", "Statistics"], ["validation", "Validation"]];
+const goTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 const isCustomId = (id?: string) => !!id && id.startsWith("custom-");
 
 function Seg<T extends string | number>({ value, options, onChange }: { value: T; options: [T, string][]; onChange: (v: T) => void }) {
@@ -65,6 +71,9 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   const [copied, setCopied] = useState(false);
+  const [skyView, setSkyView] = useState<"panorama" | "3d">("panorama");
+  const [presetReq, setPresetReq] = useState<{ key: "terrain" | "slip"; nonce: number } | null>(null);
+  const [nearbyReq, setNearbyReq] = useState<{ siteId: string; half: number; nonce: number } | null>(null);
   const allSites = useMemo(() => [...(index?.sites ?? []), ...customSites], [index, customSites]);
   const addCustom = (m: SiteMeta) => {
     setCustomSites((cs) => [...cs.filter((c) => c.id !== m.id), m]);
@@ -112,6 +121,33 @@ export default function App() {
   }, [index, selectedId]);
 
   const site = useSite(selectedId);
+
+  // No time in the link: if the default site is dark right now, open at its next sunrise (+2 h)
+  // so the first screen shows the Sun against the real skyline.
+  const smartTime = useRef(!URL0.tMs);
+  useEffect(() => {
+    if (!smartTime.current || !site) return;
+    smartTime.current = false;
+    const s = bodyState(site.sun, site.horizon_mask_deg, tH, site.time.step_h);
+    if (!s.visible && s.toRise != null) setTHRaw(clamp(tH + s.toRise + 2, 0, spanHours(site)));
+  }, [site]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onStart = (a: StartAction) => {
+    const nonce = Date.now();
+    if (a === "terrain" || a === "slip") {
+      setView("compare");
+      setPresetReq({ key: a, nonce });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (a === "nearby") {
+      setSelectedId("nobile-rim");
+      setView("single");
+      setNearbyReq({ siteId: "nobile-rim", half: 2000, nonce });
+      setTimeout(() => goTo("nearby"), 400);
+    } else {
+      setSkyView("3d");
+      setTimeout(() => goTo("sky"), 50);
+    }
+  };
   const spanH = site ? spanHours(site) : DEFAULT_SPAN_H;
   const t0ms = site ? startMs(site) : T0_MS;
   const setTH = useCallback((t: number) => setTHRaw(clamp(t, 0, spanH)), [spanH]);
@@ -198,7 +234,7 @@ export default function App() {
             <Moon size={20} className="text-slate-200" />
             <div>
               <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">
-                AetherRidge <span className="hidden font-normal text-slate-400 min-[520px]:inline">· 3D Horizon & Libration Navigator for Artemis</span>
+                AetherRidge <span className="hidden font-normal text-slate-400 min-[640px]:inline">· Sun & Earth Line-of-Sight Navigator for Lunar South Pole Landings</span>
               </h1>
               <p className="text-[10px] text-slate-500 hidden sm:block">
                 Sun & Earth vs. the real lunar horizon · NASA JPL Horizons ephemeris · LRO LOLA {index?.dem.pixel_m ?? 80} m terrain
@@ -237,8 +273,8 @@ export default function App() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1600px] grid gap-4 px-4 py-4 lg:grid-cols-[290px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-[68px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto pr-1">
+      <div className="mx-auto max-w-[1600px] grid grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-[290px_minmax(0,1fr)]">
+        <aside className="min-w-0 lg:sticky lg:top-[68px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto pr-1">
           {index ? (
             <div className="space-y-3">
               <CustomSiteForm onAdded={addCustom} request={siteRequest} />
@@ -272,7 +308,7 @@ export default function App() {
               onPickPoint={(lat, lon) => requestSite(lat, lon)}
             />
           ) : view === "compare" && index ? (
-            <CompareView sites={allSites} slots={slots} setSlots={setSlots} tH={tH} setTH={setTH} t0ms={t0ms} spanH={spanH} />
+            <CompareView sites={allSites} slots={slots} setSlots={setSlots} tH={tH} setTH={setTH} t0ms={t0ms} spanH={spanH} presetRequest={presetReq} />
           ) : !site ? (
             <div className="h-64 grid place-items-center text-sm text-slate-500">Loading site data…</div>
           ) : (
@@ -294,26 +330,58 @@ export default function App() {
                 )}
               </section>
 
-              <section className="rounded-lg border border-space-700 bg-space-900/80 p-3">
+              <NowCard site={site} tH={tH} onStart={onStart} />
+
+              <nav aria-label="Sections" className="z-10 flex gap-1 overflow-x-auto rounded-lg border border-space-700 bg-space-950/90 p-1 backdrop-blur lg:sticky lg:top-[59px]">
+                {SECTIONS.map(([id, label]) => (
+                  <button key={id} type="button" onClick={() => goTo(id)} className="shrink-0 rounded-md px-2.5 py-1 text-[12px] text-slate-300 hover:bg-space-700 hover:text-slate-50">
+                    {label}
+                  </button>
+                ))}
+              </nav>
+
+              <section id="sky" className="scroll-mt-28 rounded-lg border border-space-700 bg-space-900/80 p-3">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-semibold text-slate-200">360° horizon panorama</h3>
-                  <span className="text-[11px] text-slate-500">
-                    {site.horizon_source.startsWith("LOLA") ? "terrain ray-traced from LOLA DEM" : "ideal spherical horizon"} · dots = ±15 day track
-                  </span>
-                  <div className="ml-auto flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500">centre</span>
-                    <Seg value={center} onChange={setCenter} options={[["north", "N"], ["south", "S"], ["sun", "Sun"], ["earth", "Earth"]]} />
+                  <div className="flex overflow-hidden rounded-md border border-space-600 text-xs" role="tablist">
+                    <button type="button" role="tab" aria-selected={skyView === "panorama"} onClick={() => setSkyView("panorama")} className={`px-2.5 py-1 font-medium ${skyView === "panorama" ? "bg-sky-500/20 text-sky-100" : "bg-space-800 text-slate-400 hover:bg-space-700"}`}>
+                      360° horizon panorama
+                    </button>
+                    <button
+                      type="button" role="tab" aria-selected={skyView === "3d"} disabled={site.lat > -80}
+                      onClick={() => setSkyView("3d")}
+                      title={site.lat > -80 ? "3D terrain is available for sites inside the LOLA south-polar DEM (south of 80°S)" : "Real LOLA terrain in 3D with live Sun shadows"}
+                      className={`px-2.5 py-1 font-medium disabled:opacity-40 ${skyView === "3d" ? "bg-sky-500/20 text-sky-100" : "bg-space-800 text-slate-400 hover:bg-space-700"}`}
+                    >
+                      3D terrain
+                    </button>
                   </div>
+                  {skyView === "panorama" && (
+                    <>
+                      <span className="text-[11px] text-slate-400">
+                        {site.horizon_source.startsWith("LOLA") ? "terrain ray-traced from LOLA DEM" : "ideal spherical horizon"} · dots = ±15 day track
+                      </span>
+                      <div className="ml-auto flex items-center gap-2">
+                        <span className="text-[11px] text-slate-400">centre</span>
+                        <Seg value={center} onChange={setCenter} options={[["north", "N"], ["south", "S"], ["sun", "Sun"], ["earth", "Earth"]]} />
+                      </div>
+                    </>
+                  )}
                 </div>
-                <Panorama site={site} tH={tH} center={center} height={audience === "explorer" ? 300 : 260} />
-                {audience === "explorer" && (
+                {skyView === "3d" && site.lat <= -80 ? (
+                  <Suspense fallback={<div className="grid h-[360px] place-items-center text-xs text-slate-400">Loading 3D engine…</div>}>
+                    <Terrain3D site={site} tH={tH} height={audience === "explorer" ? 420 : 380} />
+                  </Suspense>
+                ) : (
+                  <Panorama site={site} tH={tH} center={center} height={audience === "explorer" ? 300 : 260} />
+                )}
+                {skyView === "panorama" && audience === "explorer" && (
                   <p className="mt-2 text-[12px] text-slate-400">
                     You are standing at the site looking all the way around. Grey is the real skyline from laser altimetry; the dashed line is where the horizon would be on a perfectly smooth Moon. The sky is black because the Moon has no air.
                   </p>
                 )}
               </section>
 
-              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+              <div id="status" className="scroll-mt-28 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
                 <StatusCards site={site} tH={tH} audience={audience} panel={panel} />
                 <div className="rounded-lg border border-space-700 bg-space-900/80 p-3">
                   <h3 className="text-sm font-semibold text-slate-200 mb-1">Sky dome <span className="text-[11px] font-normal text-slate-500">top-down, zenith centre</span></h3>
@@ -321,7 +389,7 @@ export default function App() {
                 </div>
               </div>
 
-              <section className="rounded-lg border border-space-700 bg-space-900/80 p-3">
+              <section id="timeline" className="scroll-mt-28 rounded-lg border border-space-700 bg-space-900/80 p-3">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <h3 className="text-sm font-semibold text-slate-200">Power & visibility timeline</h3>
                   <span className="text-[11px] text-slate-500">click to jump</span>
@@ -339,17 +407,25 @@ export default function App() {
                 </div>
               </section>
 
-              <MissionPlanner site={site} tH={tH} t0ms={t0ms} setTH={setTH} />
+              <div id="plan" className="scroll-mt-28"><MissionPlanner site={site} tH={tH} t0ms={t0ms} setTH={setTH} /></div>
 
-              <NearbyScan site={site} onAddCustom={(lat, lon, name) => requestSite(lat, lon, name)} />
+              <div id="nearby" className="scroll-mt-28">
+                {site.lat <= -80 ? (
+                  <NearbyScan site={site} onAddCustom={(lat, lon, name) => requestSite(lat, lon, name)} autoRun={nearbyReq} />
+                ) : (
+                  <p className="rounded-lg border border-space-700 bg-space-900/80 p-3 text-[12px] text-slate-400">
+                    The nearby-spot scan needs real terrain: it works for sites inside the LOLA south-polar DEM (south of 80°S).
+                  </p>
+                )}
+              </div>
 
               {audience === "explorer" && <Explainer />}
 
-              <SiteStats site={site} audience={audience} />
+              <div id="stats" className="scroll-mt-28"><SiteStats site={site} audience={audience} /></div>
 
               {audience === "planner" && <Explainer />}
 
-              <ValidationPanel />
+              <div id="validation" className="scroll-mt-28"><ValidationPanel /></div>
             </>
           )}
 

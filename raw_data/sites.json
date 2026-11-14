@@ -2,12 +2,12 @@
   {
     "id": "shackleton-rim",
     "name": "Shackleton Crater Rim (Connecting Ridge)",
-    "agency": "NASA Artemis III Candidate",
+    "agency": "Artemis III candidate in NASA's 2022 list (Connecting Ridge); not in the Oct 2024 list",
     "region": "South Pole",
     "lat": -89.68,
     "lon": 197.0,
     "elev_km": 1.5,
-    "description": "High-elevation ridge adjacent to Shackleton Crater, famous for 'peaks of eternal light' with over 80% annual solar illumination and prime proximity to permanently shadowed water-ice traps.",
+    "description": "High-elevation ridge adjacent to Shackleton Crater, famous for 'peaks of eternal light' with over 80% annual solar illumination and prime proximity to permanently shadowed water-ice traps. Note: the Shackleton-de Gerlache Connecting Ridge was one of NASA's 13 Artemis III candidate regions in 2022 but is not among the 9 regions in NASA's October 2024 update.",
     "snap": {
       "mode": "max",
       "radius_km": 2.0,
@@ -32,7 +32,7 @@
   {
     "id": "malapert-massif",
     "name": "Malapert Massif Peak",
-    "agency": "NASA Artemis III / Relay Candidate",
+    "agency": "NASA Artemis III candidate region (Oct 2024) / relay candidate",
     "region": "South Pole",
     "lat": -86.0,
     "lon": 357.5,
@@ -47,7 +47,7 @@
   {
     "id": "nobile-rim",
     "name": "Nobile Western Rim (NASA VIPER Target)",
-    "agency": "NASA CLPS / VIPER Region",
+    "agency": "NASA VIPER target area; Artemis III candidate regions nearby (Nobile Rim 1/2, Mons Mouton, Oct 2024)",
     "region": "South Pole",
     "lat": -85.42,
     "lon": 31.62,
@@ -64,7 +64,7 @@
   {
     "id": "haworth-rim",
     "name": "Haworth Rim (Artemis III Candidate)",
-    "agency": "Artemis III Candidate Region",
+    "agency": "NASA Artemis III candidate region (Oct 2024)",
     "region": "South Pole",
     "lat": -86.85,
     "lon": 354.5,

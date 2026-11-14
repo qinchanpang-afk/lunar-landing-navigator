@@ -134,6 +134,23 @@ export function project(latDeg: number, lonDeg: number, R: number): [number, num
   return [rho * Math.sin(lonDeg * RAD), rho * Math.cos(lonDeg * RAD)];
 }
 
+/**
+ * Regular grid of LOLA heights (m, relative to the 1737.4 km sphere) around a point, for display
+ * (3D terrain view). Row 0 is the +y (map-up) edge; spacing in polar-stereographic metres.
+ * Uses the 80 m level within its tiles; NaN where there is no data.
+ */
+export async function sampleGrid(lat: number, lon: number, halfM: number, n: number): Promise<{ heights: Float32Array; x0: number; y0: number; step: number; radius: number }> {
+  const { meta, near } = await getLevels();
+  const R = meta.radius_m;
+  const [x0, y0] = project(lat, lon, R);
+  await near.ensure(x0, y0, halfM + 2 * near.m.pixel_m);
+  const step = (2 * halfM) / (n - 1);
+  const heights = new Float32Array(n * n);
+  for (let j = 0; j < n; j++)
+    for (let i = 0; i < n; i++) heights[j * n + i] = near.sample(x0 - halfM + i * step, y0 + halfM - j * step);
+  return { heights, x0, y0, step, radius: R };
+}
+
 export interface HorizonResult {
   mask: number[];
   distKm: number[];

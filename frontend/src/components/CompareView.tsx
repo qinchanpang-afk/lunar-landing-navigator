@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link2, Link2Off, Loader2, Sparkles, X } from "lucide-react";
 import type { SiteDetail, SiteMeta } from "../lib/types";
 import { loadSite, useSite } from "../lib/data";
@@ -23,6 +23,8 @@ interface Props {
   setTH: (t: number) => void;
   t0ms: number;
   spanH: number;
+  /** external request to apply a demo preset (from the first-screen "Start here" buttons) */
+  presetRequest?: { key: "terrain" | "slip"; nonce: number } | null;
 }
 
 const OFFSETS: [number, string][] = [[0, "±0"], [168, "+7 d"], [336, "+14 d"], [708.73, "+1 lunar day"], [-336, "−14 d"]];
@@ -159,7 +161,7 @@ const PRESETS: { key: PresetKey; title: string; insight: string }[] = [
   },
 ];
 
-export default function CompareView({ sites, slots, setSlots, tH, setTH, t0ms, spanH }: Props) {
+export default function CompareView({ sites, slots, setSlots, tH, setTH, t0ms, spanH, presetRequest }: Props) {
   const [active, setActive] = useState<PresetKey | null>(null);
   const [busy, setBusy] = useState(false);
   const has = (id: string) => sites.some((s) => s.id === id);
@@ -192,6 +194,11 @@ export default function CompareView({ sites, slots, setSlots, tH, setTH, t0ms, s
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    if (presetRequest) applyPreset(presetRequest.key);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetRequest?.nonce]);
 
   const activePreset = PRESETS.find((p) => p.key === active);
 
