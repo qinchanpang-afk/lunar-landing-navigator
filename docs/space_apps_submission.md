@@ -93,20 +93,10 @@ The problem framing, physics rules (no refraction, 100 km curvature-corrected ho
 
 ---
 
-## 30-second demo video script (English subtitles)
+## 30-second demo video
 
-Record the live site in a desktop browser at 1920 × 1080. Each line is one subtitle card. Total ≈ 30 s.
-
-| Time | On screen | Subtitle |
-|---|---|---|
-| 0–4 s | Map view, ±160 km: polar sites coloured by sunlight | **At the lunar south pole, a few hundred metres decide whether a lander lives or dies.** |
-| 4–9 s | Compare → preset *Terrain Impact*; panoramas show the lit rim beside the dark floor | **Shackleton's rim: 88% sunlight. Its floor, 13 km away: 0%. Real NASA terrain and ephemerides.** |
-| 9–14 s | Preset *Launch Delay*; press play, the Sun crosses behind the ridge in the +14 d slot | **Launch slips two weeks? The Sun moves behind a ridge, and power is gone.** |
-| 14–21 s | Site = Nobile rim → *Best nearby spot* ±2 km → heat map fills in, star appears | **We scan the ground around any site in seconds: 2 km away, 77% sunlight instead of 53%, on a safe 5° slope.** |
-| 21–26 s | Mission planner: landing-window strip, *land here*, battery card | **Then pick the landing window and size the battery for the longest night.** |
-| 26–30 s | Validation panel open → back to the panorama, app URL on screen | **AetherRidge — validated against published LOLA studies. Try it free online.** |
-
-Tips: hide the cursor between clicks, start each scan off-camera so the heat map is already filling, and keep subtitles on screen for at least 2 s each.
+The final shot list, narration script and recording guide are in [`demo_video_script.md`](demo_video_script.md).
+The silent subtitled cut is rendered by `video/record.mjs` + `video/edit.py` (local workspace, not committed).
 
 ---
 

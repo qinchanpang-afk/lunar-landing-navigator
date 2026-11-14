@@ -157,14 +157,15 @@ export default function Terrain3D({ site, tH, height = 360 }: Props) {
 
     const render = () => renderer.render(scene, camera);
     const resetView = () => {
-      // Stand on the far side of the site from the Sun, a little off-axis, looking toward it:
-      // the Sun stays in frame and the long polar shadows stretch toward the viewer.
+      // Side-lit view: stand ~70 deg round from the Sun's side, so sunlit slopes face the camera and
+      // the long, grazing polar shadows run across the frame (a camera facing the Sun only sees the
+      // shadowed back slopes, because the Sun sits on the horizon).
       const sd = refs.current?.sunDir ?? new THREE.Vector3(0, 0, -1);
       const hz = new THREE.Vector3(sd.x, 0, sd.z);
       if (hz.lengthSq() < 1e-6) hz.set(0, 0, -1);
-      hz.normalize().applyAxisAngle(new THREE.Vector3(0, 1, 0), 35 * RAD);
+      hz.normalize().applyAxisAngle(new THREE.Vector3(0, 1, 0), 110 * RAD);
       const dist = (half / 1000) * 1.9;
-      camera.position.set(-hz.x * dist, (half / 1000) * 0.75, -hz.z * dist);
+      camera.position.set(-hz.x * dist, (half / 1000) * 0.95, -hz.z * dist);
       controls.target.set(0, 0, 0);
       controls.update();
       render();

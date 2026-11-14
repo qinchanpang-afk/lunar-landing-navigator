@@ -25,3 +25,6 @@ Thumbs.db
 
 # NASA PGDA illumination rasters (download from https://pgda.gsfc.nasa.gov/products/69)
 raw_data/pgda/*.TIF
+
+# demo-video workspace (recordings, frames, renders)
+video/
