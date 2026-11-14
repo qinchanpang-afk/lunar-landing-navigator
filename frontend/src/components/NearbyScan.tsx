@@ -104,7 +104,7 @@ export default function NearbyScan({ site, onAddCustom, autoRun }: Props) {
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <Radar size={15} className="text-amber-300" />
         <h3 className="text-sm font-semibold text-slate-200">Best nearby spot</h3>
-        <span className="text-[11px] text-slate-500">re-traces the horizon at {N}×{N} points around the site · same Horizons ephemeris</span>
+        <span className="text-[11px] text-slate-400">re-traces the horizon at {N}×{N} points around the site · same Horizons ephemeris</span>
       </div>
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <select value={half} onChange={(e) => setHalf(Number(e.target.value))} className="rounded border border-space-600 bg-space-800 px-1.5 py-1 text-slate-200" aria-label="Scan area">
@@ -171,13 +171,13 @@ export default function NearbyScan({ site, onAddCustom, autoRun }: Props) {
                 <div>Slope <span className={`font-mono ${hover.slopeDeg > MAX_SLOPE ? "text-rose-300" : ""}`}>{hover.slopeDeg.toFixed(1)}°</span> · ground <span className="font-mono">{(hover.groundM / 1000).toFixed(3)} km</span></div>
               </div>
             )}
-            <div className="mt-1.5 flex items-center gap-2 text-[10px] text-slate-400">
+            <div className="mt-1.5 flex items-center gap-2 text-[11px] text-slate-400">
               <span className="font-mono">{pctStr(lo)}</span>
               <div className="h-2 flex-1 rounded-sm" style={{ background: `linear-gradient(90deg, ${RAMP.join(",")})` }} />
               <span className="font-mono">{pctStr(hi)}</span>
               <span>{unit}</span>
             </div>
-            <div className="mt-1 flex flex-wrap gap-3 text-[10px] text-slate-500">
+            <div className="mt-1 flex flex-wrap gap-3 text-[11px] text-slate-400">
               <span>map up = toward 0°E</span><span>○ site</span><span>☆ best {safeOnly ? "safe " : ""}cell</span>{safeOnly && <span>struck-out = slope &gt; {MAX_SLOPE}°</span>}
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function NearbyScan({ site, onAddCustom, autoRun }: Props) {
             ) : best && centre ? (
               <>
                 <div className="rounded-md border border-amber-400/25 bg-amber-500/5 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-amber-200">Best {safeOnly ? "lander-safe " : ""}cell by {unit}</div>
+                  <div className="text-[11px] uppercase tracking-wider text-amber-200">Best {safeOnly ? "lander-safe " : ""}cell by {unit}</div>
                   <div className="mt-1 text-lg font-semibold text-amber-100">
                     {pctStr(best[metric])}{" "}
                     <span className={`text-sm font-normal ${best[metric] - centre[metric] > 0.05 ? "text-emerald-300" : "text-slate-400"}`}>
@@ -208,7 +208,7 @@ export default function NearbyScan({ site, onAddCustom, autoRun }: Props) {
                     </button>
                   )}
                 </div>
-                <p className="text-[11px] leading-relaxed text-slate-500">
+                <p className="text-[11px] leading-relaxed text-slate-400">
                   Range across the {N * N} cells: {pctStr(lo)} – {pctStr(hi)} {unit}. A few hundred metres can change the power budget
                   as much as choosing a different region. Uses the browser's hybrid 80 m / 160 m LOLA horizon (validated within 0.1 pp of the
                   full-resolution pipeline); grid spacing is in polar-stereographic metres.

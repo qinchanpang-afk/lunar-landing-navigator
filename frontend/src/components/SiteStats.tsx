@@ -13,7 +13,7 @@ function Row({ k, v, hint }: { k: string; v: string; hint?: string }) {
     <div className="flex items-baseline justify-between gap-3 py-1 border-b border-space-800 last:border-0">
       <div className="text-xs text-slate-400">
         {k}
-        {hint && <div className="text-[11px] text-slate-500">{hint}</div>}
+        {hint && <div className="text-[11px] text-slate-400">{hint}</div>}
       </div>
       <div className="font-mono text-sm text-slate-100 whitespace-nowrap">{v}</div>
     </div>
@@ -56,7 +56,7 @@ export default function SiteStats({ site, audience }: Props) {
           ))}
         </ul>
       )}
-      <div className="mt-2 text-[10px] text-slate-500 leading-snug">
+      <div className="mt-2 text-[11px] text-slate-400 leading-snug">
         Horizon: {site.horizon_source}.{site.snap?.applied ? ` Snapped ${site.snap.shift_km} km from catalog point to ${site.snap.note}.` : ""}
       </div>
     </div>

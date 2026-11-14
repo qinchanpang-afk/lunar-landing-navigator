@@ -56,8 +56,8 @@ export default function ValidationPanel() {
       <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 text-left">
         <ShieldCheck size={15} className="text-emerald-300" />
         <h3 className="text-sm font-semibold text-slate-200">Validation & trust</h3>
-        <span className="text-[11px] text-slate-500">automated physics checks · literature comparison · browser vs pipeline</span>
-        <ChevronDown size={14} className={`ml-auto text-slate-500 transition ${open ? "rotate-180" : ""}`} />
+        <span className="text-[11px] text-slate-400">automated physics checks · literature comparison · browser vs pipeline</span>
+        <ChevronDown size={14} className={`ml-auto text-slate-400 transition ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
@@ -66,12 +66,12 @@ export default function ValidationPanel() {
             <div className="text-[11px] uppercase tracking-wider text-slate-400">
               Pipeline self-checks {rep && <span className="ml-1 font-mono normal-case text-emerald-300">{passed}/{rep.checks.length} pass</span>}
             </div>
-            {!rep ? <p className="mt-1 text-slate-500">Loading…</p> : (
+            {!rep ? <p className="mt-1 text-slate-400">Loading…</p> : (
               <ul className="mt-1.5 space-y-1">
                 {rep.checks.map((c) => (
                   <li key={c.check} className="flex items-start gap-2">
                     {c.pass ? <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-emerald-400" /> : <XCircle size={14} className="mt-0.5 shrink-0 text-rose-400" />}
-                    <span><span className="text-slate-200">{c.check}</span> <span className="font-mono text-[11px] text-slate-500">{c.detail}</span></span>
+                    <span><span className="text-slate-200">{c.check}</span> <span className="font-mono text-[11px] text-slate-400">{c.detail}</span></span>
                   </li>
                 ))}
               </ul>
@@ -82,11 +82,11 @@ export default function ValidationPanel() {
             <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-slate-400"><BookOpen size={12} /> Against published LOLA illumination studies</div>
             <div className="mt-1.5 overflow-x-auto">
               <table className="w-full min-w-[560px] text-left text-[11px]">
-                <thead className="text-slate-500"><tr><th className="py-1 font-normal">Quantity</th><th className="font-normal">This tool</th><th className="font-normal">Published</th><th className="font-normal">Source</th></tr></thead>
+                <thead className="text-slate-400"><tr><th className="py-1 font-normal">Quantity</th><th className="font-normal">This tool</th><th className="font-normal">Published</th><th className="font-normal">Source</th></tr></thead>
                 <tbody className="text-slate-300">
                   {LITERATURE.map((l) => (
                     <tr key={l.quantity} className="border-t border-space-800 align-top">
-                      <td className="py-1.5 pr-2">{l.quantity}<div className="text-[10px] text-slate-500">{l.why}</div></td>
+                      <td className="py-1.5 pr-2">{l.quantity}<div className="text-[11px] text-slate-400">{l.why}</div></td>
                       <td className="pr-2 font-mono text-amber-100">{l.ours}</td>
                       <td className="pr-2 font-mono text-slate-200">{l.theirs}</td>
                       <td><a href={l.url} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">{l.ref}</a></td>
@@ -102,7 +102,7 @@ export default function ValidationPanel() {
               <div className="text-[11px] uppercase tracking-wider text-slate-400">Against NASA's long-term LOLA illumination maps (independent product)</div>
               <div className="mt-1.5 overflow-x-auto">
                 <table className="w-full min-w-[560px] text-left text-[11px]">
-                  <thead className="text-slate-500">
+                  <thead className="text-slate-400">
                     <tr>
                       <th className="py-1 font-normal">Site</th>
                       <th className="font-normal">Sunlight: this tool</th>
@@ -144,7 +144,7 @@ export default function ValidationPanel() {
               <div className="text-[11px] uppercase tracking-wider text-slate-400">Browser ray-tracer (custom sites, nearby scan) vs full-resolution pipeline</div>
               <div className="mt-1.5 overflow-x-auto">
                 <table className="w-full min-w-[480px] text-left font-mono text-[11px] text-slate-300">
-                  <thead className="font-sans text-slate-500"><tr><th className="py-1 font-normal">Site</th><th className="font-normal">Horizon RMS</th><th className="font-normal">Max |Δ|</th><th className="font-normal">Sun % (pipeline → browser)</th><th className="font-normal">DTE %</th></tr></thead>
+                  <thead className="font-sans text-slate-400"><tr><th className="py-1 font-normal">Site</th><th className="font-normal">Horizon RMS</th><th className="font-normal">Max |Δ|</th><th className="font-normal">Sun % (pipeline → browser)</th><th className="font-normal">DTE %</th></tr></thead>
                   <tbody>
                     {hyb.map((h) => (
                       <tr key={h.id} className="border-t border-space-800">
@@ -174,7 +174,7 @@ export default function ValidationPanel() {
               </ul>
             </div>
           )}
-          <p className="text-[10px] text-slate-600">Known limits: 80 m DEM smooths sub-pixel peaks; 2-year window (not a full 18.6-year nodal cycle); no refraction (airless Moon); Earth treated as a point at its centre.</p>
+          <p className="text-[11px] text-slate-500">Known limits: 80 m DEM smooths sub-pixel peaks; 2-year window (not a full 18.6-year nodal cycle); no refraction (airless Moon); Earth treated as a point at its centre.</p>
         </div>
       )}
     </section>

@@ -29,6 +29,8 @@ This app answers that interactively, from precomputed data with no API latency. 
 | **South-pole map** | LOLA shaded-relief map (±160 km and ±48 km views) with every polar site coloured by sunlight, plus switchable **NASA long-term Sun and Earth visibility overlays** (permanently shadowed cold traps in blue) with a hover read-out. Click a marker to open a site, or click anywhere to analyse that exact spot. |
 | **Best nearby spot** | Re-traces the terrain horizon on an 11 × 11 grid (±0.5, ±1 or ±2 km) around any polar site in parallel Web Workers (~8 s). Shows a sunlight / Sun+DTE heat map and the best **lander-safe** cell (slope ≤ 10°), which can be opened as a full site in one click. |
 | **Mission planner** | *Landing-window finder*: every 2026–2027 touchdown time that guarantees N days of continuous Sun (+ Earth link), with the delay until the next window if a launch slips. *Battery sizing*: energy and mass to survive the longest shadow during the mission, and the worst night of the two years. |
+| **Site report (PDF)** | One click produces a printable one-page report per site (status at the chosen time, 2-year statistics, skyline profile, panorama snapshot, landing windows, battery estimate, NASA cross-check, sources), ready for *Save as PDF*. |
+| **Links to NASA/LROC tools** | Every site opens at the same spot in LROC QuickMap (south-polar orthographic view) and links to NASA Moon Trek, the tools listed in the challenge resources. |
 | **Shareable deep links** | The address bar always encodes the site, time, view, audience and comparison slots (e.g. `?site=nobile-rim&t=2026-11-30T06:00Z&view=compare&cmp=nobile-rim,nobile-rim~o336`). A link to a custom site recomputes it for the recipient. |
 | **Validation & trust panel** | All pipeline self-checks, a comparison with published LOLA illumination studies, and browser-vs-pipeline accuracy, inside the app. |
 | **Two audiences** | *Planner* mode gives exact angles, statistics and a CSV export of the full 2-hourly series. *Explorer* mode adds plain-language explanations: why the pole is extreme, why there is no refraction, why Earth wobbles. |
@@ -212,7 +214,8 @@ JPL Horizons does not send CORS headers, so custom-coordinate requests go to the
 │   ├── build_data.py          # Horizons + LOLA ray-trace + per-step analysis + sanity checks
 │   ├── build_dem_tiles.py     # browser DEM pyramid (80 m / 160 m) + hybrid validation
 │   ├── build_basemap.py       # LOLA shaded-relief images for the map view
-│   └── build_pgda.py          # NASA PGDA long-term illumination: validation + map overlays
+│   ├── build_pgda.py          # NASA PGDA long-term illumination: validation + map overlays
+│   └── build_og.py            # social-preview image (frontend/public/og.png)
 ├── raw_data/
 │   ├── sites.json             # site catalog (+ snapping rules, coordinate sources)
 │   ├── ldem_80s_80m.lbl       # PDS3 label  (the .img itself is git-ignored)

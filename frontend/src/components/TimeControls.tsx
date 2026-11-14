@@ -92,7 +92,7 @@ export default function TimeControls(p: Props) {
         className="mt-3 w-full accent-sky-400"
         aria-label="Time scrubber 2026-2027"
       />
-      <div className="flex justify-between text-[10px] font-mono text-slate-500">
+      <div className="flex justify-between text-[11px] font-mono text-slate-400">
         <span>2026-01-01</span>
         <span className="text-slate-300">{fmtUTC(ms)}</span>
         <span>2027-12-31</span>

@@ -1,0 +1,13 @@
+/** AetherRidge mark: a lit ridge line with the Sun above and the Earth low in the sky. */
+export default function Logo({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="#0b0f1c" />
+      <circle cx="44" cy="22" r="11" fill="#fbbf24" opacity="0.18" />
+      <circle cx="44" cy="22" r="7" fill="#fbbf24" />
+      <path d="M4 50 L18 32 L25 39 L34 24 L46 40 L52 35 L60 44 L60 60 L4 60 Z" fill="#94a3b8" />
+      <path d="M4 50 L18 32 L25 39 L34 24 L46 40 L52 35 L60 44" fill="none" stroke="#e2e8f0" strokeWidth="2.2" strokeLinejoin="round" />
+      <circle cx="14" cy="16" r="3.4" fill="#38bdf8" />
+    </svg>
+  );
+}

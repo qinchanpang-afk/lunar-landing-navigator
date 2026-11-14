@@ -81,7 +81,7 @@ export default function CustomSiteForm({ onAdded, request }: Props) {
     <div className="rounded-lg border border-space-700 bg-space-900/60 p-2.5">
       <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 text-left text-[13px] font-medium text-slate-200">
         <Crosshair size={14} className="text-sky-300" /> Custom coordinates
-        <span className="ml-auto text-[10px] text-slate-500">{open ? "hide" : "add site"}</span>
+        <span className="ml-auto text-[11px] text-slate-400">{open ? "hide" : "add site"}</span>
       </button>
       {open && (
         <form
@@ -92,26 +92,26 @@ export default function CustomSiteForm({ onAdded, request }: Props) {
           }}
         >
           <div className="grid grid-cols-2 gap-2">
-            <label className="text-[10px] text-slate-400">
+            <label className="text-[11px] text-slate-400">
               Latitude (°, −90…90)
               <input className={field} value={lat} onChange={(e) => setLat(e.target.value)} inputMode="decimal" placeholder="-89.45" />
             </label>
-            <label className="text-[10px] text-slate-400">
+            <label className="text-[11px] text-slate-400">
               East longitude (°)
               <input className={field} value={lon} onChange={(e) => setLon(e.target.value)} inputMode="decimal" placeholder="222.7" />
             </label>
           </div>
-          <label className="block text-[10px] text-slate-400">
+          <label className="block text-[11px] text-slate-400">
             Name (optional)
             <input className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. de Gerlache rim" />
           </label>
           {!polar && (
-            <label className="block text-[10px] text-slate-400">
+            <label className="block text-[11px] text-slate-400">
               Elevation (km vs 1737.4 km sphere)
               <input className={field} value={elev} onChange={(e) => setElev(e.target.value)} inputMode="decimal" />
             </label>
           )}
-          <p className="text-[10px] leading-snug text-slate-500">
+          <p className="text-[11px] leading-snug text-slate-400">
             {!valid
               ? "Enter a valid latitude and longitude."
               : polar

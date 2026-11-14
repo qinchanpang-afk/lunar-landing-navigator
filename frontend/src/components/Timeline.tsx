@@ -82,7 +82,7 @@ const Strips = memo(function Strips({ site, i0, i1, onSeek }: { site: SiteDetail
     <div style={{ paddingLeft: AXIS_L, paddingRight: AXIS_R }} className="space-y-1 mt-1">
       {rows.map(([label, vis, color]) => (
         <div key={label} className="relative">
-          <span className="absolute -left-11 top-0 text-[10px] text-slate-400 w-10 text-right">{label}</span>
+          <span className="absolute -left-11 top-0 text-[11px] text-slate-400 w-10 text-right">{label}</span>
           <svg
             viewBox={`0 0 ${n} 1`} preserveAspectRatio="none" className="w-full h-3 rounded-sm bg-space-800 cursor-pointer"
             onClick={(e) => {

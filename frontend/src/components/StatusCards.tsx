@@ -26,7 +26,7 @@ function Card({ icon, title, accent, children }: { icon: ReactNode; title: strin
 
 function Chip({ ok, okText, badText }: { ok: boolean; okText: string; badText: string }) {
   return (
-    <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${ok ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"}`}>
+    <span className={`inline-block rounded px-1.5 py-0.5 text-[11px] font-semibold tracking-wide ${ok ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"}`}>
       {ok ? okText : badText}
     </span>
   );

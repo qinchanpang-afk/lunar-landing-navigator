@@ -69,7 +69,7 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
     return () => { live = false; };
   }, [overlay, which]);
 
-  if (!meta) return <div className="h-64 grid place-items-center text-xs text-slate-500">Loading map…</div>;
+  if (!meta) return <div className="h-64 grid place-items-center text-xs text-slate-400">Loading map…</div>;
   const L = meta.layers[which];
   const S = L.size_m;
   const toSvg = (lat: number, lon: number) => {
@@ -95,7 +95,7 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <MapIcon size={15} className="text-sky-300" />
         <h3 className="text-sm font-semibold text-slate-200">South-pole map</h3>
-        <span className="text-[11px] text-slate-500">LOLA shaded relief · click a marker to open a site, or anywhere else to analyse that spot</span>
+        <span className="text-[11px] text-slate-400">LOLA shaded relief · click a marker to open a site, or anywhere else to analyse that spot</span>
         <div className="ml-auto flex overflow-hidden rounded-md border border-space-600 text-[11px]">
           {([["region", "Pole ±160 km"], ["pole", "Pole ±48 km"]] as const).map(([k, l]) => (
             <button key={k} type="button" onClick={() => setWhich(k)} className={`px-2 py-1 ${which === k ? "bg-sky-500/20 text-sky-200" : "bg-space-800 text-slate-400 hover:bg-space-700"}`}>{l}</button>
@@ -199,7 +199,7 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
           <div className="absolute right-2 top-2 w-60 rounded-md border border-sky-400/40 bg-space-950/95 p-2.5 text-xs text-slate-200 shadow-xl">
             <div className="flex items-start justify-between gap-2">
               <span className="font-mono">{pick[0].toFixed(4)}°, {pick[1].toFixed(3)}°E</span>
-              <button type="button" onClick={() => setPick(null)} className="text-slate-500 hover:text-slate-300" aria-label="Close"><X size={13} /></button>
+              <button type="button" onClick={() => setPick(null)} className="text-slate-400 hover:text-slate-300" aria-label="Close"><X size={13} /></button>
             </div>
             <p className="mt-1 text-[11px] text-slate-400">Ray-trace the horizon here and fetch 2 years of Sun/Earth positions from JPL Horizons (about 10–20 s).</p>
             <button
@@ -248,14 +248,14 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
         </span>
         <span>dot in marker = your custom site</span>
         {offMap.length > 0 && (
-          <span className="text-slate-500">
+          <span className="text-slate-400">
             Not on this map (outside the polar DEM): {offMap.map((s, i) => (
               <button key={s.id} type="button" onClick={() => onSelect(s.id)} className="text-sky-300 hover:underline">{i ? ", " : ""}{s.name.split(" (")[0]}</button>
             ))}
           </span>
         )}
       </div>
-      <p className="mt-1 text-[10px] text-slate-600">{meta.source}. Polar stereographic, 0°E toward the top.</p>
+      <p className="mt-1 text-[11px] text-slate-500">{meta.source}. Polar stereographic, 0°E toward the top.</p>
     </section>
   );
 }

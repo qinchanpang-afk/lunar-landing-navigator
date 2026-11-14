@@ -47,7 +47,7 @@ function SlotCard({ slot, sites, update, remove, tMain, t0ms, spanH }: {
         >
           {sites.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
-        <button type="button" onClick={remove} className="rounded p-1 text-slate-500 hover:bg-space-700 hover:text-slate-300" aria-label="Remove slot">
+        <button type="button" onClick={remove} className="rounded p-1 text-slate-400 hover:bg-space-700 hover:text-slate-300" aria-label="Remove slot">
           <X size={14} />
         </button>
       </div>
@@ -92,13 +92,13 @@ function SlotCard({ slot, sites, update, remove, tMain, t0ms, spanH }: {
           </div>
           <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
             <span className="text-slate-400">Sun</span>
-            <span className={`font-mono text-right ${sun.visible ? "text-sun" : "text-slate-500"}`}>{fmtDeg(sun.el)} {sun.visible ? "lit" : "dark"}</span>
+            <span className={`font-mono text-right ${sun.visible ? "text-sun" : "text-slate-400"}`}>{fmtDeg(sun.el)} {sun.visible ? "lit" : "dark"}</span>
             <span className="text-slate-400">{sun.visible ? "Sunset in" : "Sunrise in"}</span>
             <span className="font-mono text-right text-slate-200">
               {(sun.visible ? sun.toSet : sun.toRise) == null ? (sun.visible ? "none in data" : "never") : fmtDuration(sun.visible ? sun.toSet : sun.toRise)}
             </span>
             <span className="text-slate-400">Earth</span>
-            <span className={`font-mono text-right ${earth.visible ? "text-earth" : "text-slate-500"}`}>{fmtDeg(earth.el)} {earth.visible ? "link" : "no link"}</span>
+            <span className={`font-mono text-right ${earth.visible ? "text-earth" : "text-slate-400"}`}>{fmtDeg(earth.el)} {earth.visible ? "link" : "no link"}</span>
             <span className="text-slate-400">{earth.visible ? "Earthset in" : "Earthrise in"}</span>
             <span className="font-mono text-right text-slate-200">
               {(earth.visible ? earth.toSet : earth.toRise) == null ? (earth.visible ? "none in data" : "never") : fmtDuration(earth.visible ? earth.toSet : earth.toRise)}
@@ -111,14 +111,14 @@ function SlotCard({ slot, sites, update, remove, tMain, t0ms, spanH }: {
               ["Max shadow", fmtDuration(st.max_continuous_shadow_h), "text-slate-200"],
             ].map(([k, v, c]) => (
               <div key={k}>
-                <div className="text-[10px] uppercase tracking-wide text-slate-500">{k}</div>
+                <div className="text-[11px] uppercase tracking-wide text-slate-400">{k}</div>
                 <div className={`font-mono text-sm ${c}`}>{v}</div>
               </div>
             ))}
           </div>
         </>
       ) : (
-        <div className="h-48 grid place-items-center text-xs text-slate-500">Loading…</div>
+        <div className="h-48 grid place-items-center text-xs text-slate-400">Loading…</div>
       )}
     </div>
   );
@@ -242,7 +242,7 @@ export default function CompareView({ sites, slots, setSlots, tH, setTH, t0ms, s
           </button>
         )}
       </div>
-      <p className="mt-2 text-[11px] text-slate-500">
+      <p className="mt-2 text-[11px] text-slate-400">
         Each slot can follow the main timeline (optionally shifted, e.g. a launch delay) or use its own date — compare different sites at the same moment, or the same site across seasons.
       </p>
     </div>

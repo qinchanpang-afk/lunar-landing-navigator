@@ -1,5 +1,8 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, Columns2, Compass, GraduationCap, Link as LinkIcon, Map as MapIcon, Moon, Satellite, Wrench } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Columns2, Compass, ExternalLink, FileText, GraduationCap, Link as LinkIcon, Map as MapIcon, Satellite, Wrench } from "lucide-react";
+import Logo from "./components/Logo";
+import { MOON_TREK_URL, quickmapUrl } from "./lib/links";
+import { openSiteReport } from "./lib/report";
 import { registerSite, useIndex, useSite } from "./lib/data";
 import { clearCustomSites, loadCustomSites, removeCustomSite } from "./lib/storage";
 import type { Audience, SiteMeta } from "./lib/types";
@@ -66,8 +69,11 @@ export default function App() {
 
   const [customSites, setCustomSites] = useState<SiteMeta[]>([]);
   const [siteRequest, setSiteRequest] = useState<SiteRequest | null>(null);
+  // Phones: the site list folds away so the answer is visible first.
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const requestSite = useCallback((lat: number, lon: number, name = "") => {
     setSiteRequest({ lat, lon, name, nonce: Date.now() });
+    setSidebarOpen(true); // show the custom-site progress on phones
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   const [copied, setCopied] = useState(false);
@@ -231,12 +237,12 @@ export default function App() {
       <header className="sticky top-0 z-20 border-b border-space-700 bg-space-950/90 backdrop-blur">
         <div className="mx-auto max-w-[1600px] flex flex-wrap items-center gap-3 px-4 py-2.5">
           <div className="flex items-center gap-2">
-            <Moon size={20} className="text-slate-200" />
+            <Logo size={26} />
             <div>
               <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">
                 AetherRidge <span className="hidden font-normal text-slate-400 min-[640px]:inline">· Sun & Earth Line-of-Sight Navigator for Lunar South Pole Landings</span>
               </h1>
-              <p className="text-[10px] text-slate-500 hidden sm:block">
+              <p className="text-[11px] text-slate-400 hidden sm:block">
                 Sun & Earth vs. the real lunar horizon · NASA JPL Horizons ephemeris · LRO LOLA {index?.dem.pixel_m ?? 80} m terrain
               </p>
             </div>
@@ -247,7 +253,7 @@ export default function App() {
                 <Compass size={13} /> Site
               </button>
               <button type="button" onClick={() => setView("compare")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 ${view === "compare" ? "bg-violet-500/20 text-violet-200" : "bg-space-800 text-slate-400"}`}>
-                <Columns2 size={13} /> Compare <span className="font-mono text-[10px] opacity-70">{slots.length}</span>
+                <Columns2 size={13} /> Compare <span className="font-mono text-[11px] opacity-70">{slots.length}</span>
               </button>
               <button type="button" onClick={() => setView("map")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 ${view === "map" ? "bg-sky-500/20 text-sky-200" : "bg-space-800 text-slate-400"}`}>
                 <MapIcon size={13} /> Map
@@ -275,13 +281,22 @@ export default function App() {
 
       <div className="mx-auto max-w-[1600px] grid grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-[290px_minmax(0,1fr)]">
         <aside className="min-w-0 lg:sticky lg:top-[68px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto pr-1">
+          <button
+            type="button" onClick={() => setSidebarOpen((o) => !o)} aria-expanded={sidebarOpen}
+            className="mb-2 flex w-full items-center gap-2 rounded-lg border border-space-600 bg-space-900 px-3 py-2 text-left text-[13px] text-slate-200 lg:hidden"
+          >
+            <span className="text-slate-400">Sites</span>
+            <span className="min-w-0 flex-1 truncate font-medium">{allSites.find((s) => s.id === selectedId)?.name ?? "…"}</span>
+            <span className="text-[12px] text-sky-300">{sidebarOpen ? "hide" : `all ${allSites.length}`}</span>
+            <ChevronDown size={15} className={`text-slate-400 transition ${sidebarOpen ? "rotate-180" : ""}`} />
+          </button>
           {index ? (
-            <div className="space-y-3">
+            <div className={`space-y-3 ${sidebarOpen ? "" : "hidden lg:block"}`}>
               <CustomSiteForm onAdded={addCustom} request={siteRequest} />
               <SiteList
                 sites={allSites}
                 selectedId={selectedId}
-                onSelect={(id) => { setSelectedId(id); setView("single"); }}
+                onSelect={(id) => { setSelectedId(id); setView("single"); setSidebarOpen(false); }}
                 compareIds={slots.map((s) => s.id)}
                 toggleCompare={toggleCompare}
                 onRemove={removeCustom}
@@ -289,7 +304,7 @@ export default function App() {
               />
             </div>
           ) : (
-            <div className="text-xs text-slate-500">Loading sites…</div>
+            <div className="text-xs text-slate-400">Loading sites…</div>
           )}
         </aside>
 
@@ -310,15 +325,44 @@ export default function App() {
           ) : view === "compare" && index ? (
             <CompareView sites={allSites} slots={slots} setSlots={setSlots} tH={tH} setTH={setTH} t0ms={t0ms} spanH={spanH} presetRequest={presetReq} />
           ) : !site ? (
-            <div className="h-64 grid place-items-center text-sm text-slate-500">Loading site data…</div>
+            <div className="h-64 grid place-items-center text-sm text-slate-400">Loading site data…</div>
           ) : (
             <>
               <section>
                 <div className="flex flex-wrap items-end gap-x-4 gap-y-1">
                   <h2 className="text-lg font-semibold text-slate-50">{site.name}</h2>
                   <span className="text-xs text-slate-400">{site.agency}</span>
-                  <span className="font-mono text-[11px] text-slate-500">
+                  <span className="font-mono text-[11px] text-slate-400">
                     {site.lat.toFixed(4)}°, {site.lon.toFixed(3)}°E · {site.elev_km_used.toFixed(3)} km
+                  </span>
+                  <span className="ml-auto flex flex-wrap items-center gap-1.5">
+                    <a
+                      href={quickmapUrl(site.lat, site.lon)} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-1 rounded-md border border-space-600 bg-space-800 px-2 py-1 text-[12px] text-slate-200 hover:bg-space-700"
+                      title="Open this exact spot in LROC QuickMap (NASA LRO imagery and data layers)"
+                    >
+                      <ExternalLink size={12} /> QuickMap
+                    </a>
+                    <a
+                      href={MOON_TREK_URL} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-1 rounded-md border border-space-600 bg-space-800 px-2 py-1 text-[12px] text-slate-200 hover:bg-space-700"
+                      title="Open NASA Moon Trek"
+                    >
+                      <ExternalLink size={12} /> Moon Trek
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const pano = skyView === "panorama" ? (document.querySelector("#sky canvas") as HTMLCanvasElement | null) : null;
+                        let png: string | null = null;
+                        try { png = pano ? pano.toDataURL("image/png") : null; } catch { png = null; }
+                        openSiteReport(site, tH, t0ms, window.location.origin + shareUrl, png);
+                      }}
+                      className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-1 text-[12px] font-medium text-emerald-100 hover:bg-emerald-500/25"
+                      title="Printable one-page site report (use Save as PDF)"
+                    >
+                      <FileText size={12} /> Report / PDF
+                    </button>
                   </span>
                 </div>
                 <p className="mt-1 text-[13px] text-slate-400 max-w-4xl">{site.description}</p>
@@ -384,7 +428,7 @@ export default function App() {
               <div id="status" className="scroll-mt-28 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
                 <StatusCards site={site} tH={tH} audience={audience} panel={panel} />
                 <div className="rounded-lg border border-space-700 bg-space-900/80 p-3">
-                  <h3 className="text-sm font-semibold text-slate-200 mb-1">Sky dome <span className="text-[11px] font-normal text-slate-500">top-down, zenith centre</span></h3>
+                  <h3 className="text-sm font-semibold text-slate-200 mb-1">Sky dome <span className="text-[11px] font-normal text-slate-400">top-down, zenith centre</span></h3>
                   <SkyDome site={site} tH={tH} />
                 </div>
               </div>
@@ -392,7 +436,7 @@ export default function App() {
               <section id="timeline" className="scroll-mt-28 rounded-lg border border-space-700 bg-space-900/80 p-3">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <h3 className="text-sm font-semibold text-slate-200">Power & visibility timeline</h3>
-                  <span className="text-[11px] text-slate-500">click to jump</span>
+                  <span className="text-[11px] text-slate-400">click to jump</span>
                   <div className="ml-auto flex flex-wrap items-center gap-2">
                     <Seg value={panel} onChange={setPanel} options={[["horizontal", "Flat panel sin(el)"], ["vertical", "Vertical cos(el)"]]} />
                     <Seg value={windowDays} onChange={setWindowDays} options={[[30, "1 lunar day"], [90, "90 d"], [365, "1 yr"]]} />
@@ -429,7 +473,7 @@ export default function App() {
             </>
           )}
 
-          <footer className="pt-2 pb-6 text-[10px] text-slate-600 flex items-center gap-1.5">
+          <footer className="pt-2 pb-6 text-[11px] text-slate-500 flex items-center gap-1.5">
             <Satellite size={11} />
             <span>
               Data generated {index?.generated_utc ?? "…"} · {index?.ephemeris_source} · horizon ray-trace {index?.trace_km} km, observer mast {index?.observer_mast_m} m · NASA Space Apps 2026 · Team Akasha Solo ·

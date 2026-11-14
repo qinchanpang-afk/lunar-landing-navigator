@@ -51,7 +51,7 @@ export default function MissionPlanner({ site, tH, t0ms, setTH }: Props) {
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <Rocket size={15} className="text-sky-300" />
         <h3 className="text-sm font-semibold text-slate-200">Mission planner</h3>
-        <span className="text-[11px] text-slate-500">landing windows & battery sizing from the 2026–2027 visibility series</span>
+        <span className="text-[11px] text-slate-400">landing windows & battery sizing from the 2026–2027 visibility series</span>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -82,7 +82,7 @@ export default function MissionPlanner({ site, tH, t0ms, setTH }: Props) {
               ))}
               <line x1={(tH / spanH) * 1000} x2={(tH / spanH) * 1000} y1={0} y2={26} stroke="#f8fafc" strokeWidth={2} vectorEffect="non-scaling-stroke" />
             </svg>
-            <div className="flex justify-between text-[10px] text-slate-500"><span>2026-01</span><span>2027-01</span><span>2027-12</span></div>
+            <div className="flex justify-between text-[11px] text-slate-400"><span>2026-01</span><span>2027-01</span><span>2027-12</span></div>
           </div>
 
           <p className="mt-2 text-[12px] text-slate-300">
@@ -95,7 +95,7 @@ export default function MissionPlanner({ site, tH, t0ms, setTH }: Props) {
 
           {upcoming.length > 0 && (
             <table className="mt-2 w-full text-left text-[11px]">
-              <thead className="text-slate-500">
+              <thead className="text-slate-400">
                 <tr><th className="font-normal">Opens (UTC)</th><th className="font-normal">Closes</th><th className="font-normal">Best guaranteed</th><th /></tr>
               </thead>
               <tbody className="font-mono text-slate-200">
@@ -105,7 +105,7 @@ export default function MissionPlanner({ site, tH, t0ms, setTH }: Props) {
                     <td>{fmtUTC(t0ms + w.closeH * 3_600_000).slice(5, 16)}</td>
                     <td>{fmtDuration(w.bestH)}</td>
                     <td className="text-right">
-                      <button type="button" onClick={() => pick(w.openH)} className="rounded bg-space-700 px-1.5 py-0.5 font-sans text-[10px] text-sky-200 hover:bg-space-600">land here</button>
+                      <button type="button" onClick={() => pick(w.openH)} className="rounded bg-space-700 px-1.5 py-0.5 font-sans text-[11px] text-sky-200 hover:bg-space-600">land here</button>
                     </td>
                   </tr>
                 ))}
@@ -140,20 +140,20 @@ export default function MissionPlanner({ site, tH, t0ms, setTH }: Props) {
 
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="rounded-md border border-sky-400/25 bg-sky-500/5 p-2.5">
-              <div className="text-[10px] uppercase tracking-wider text-sky-200">This mission</div>
+              <div className="text-[11px] uppercase tracking-wider text-sky-200">This mission</div>
               <div className="mt-1 text-lg font-semibold text-slate-50">{shadowH > 0 ? fmtWh(energyWh) : "No night"}</div>
               <div className="text-[11px] text-slate-400">
                 longest shadow {shadowH > 0 ? fmtDuration(shadowH) : "—"}{shadowH > 0 && <> · ≈ {(energyWh / WH_PER_KG).toFixed(1)} kg</>}
               </div>
-              {truncated && <div className="mt-1 text-[10px] text-amber-200/80">Mission extends past 2027-12-31; only data inside the span is counted.</div>}
+              {truncated && <div className="mt-1 text-[11px] text-amber-200/80">Mission extends past 2027-12-31; only data inside the span is counted.</div>}
             </div>
             <div className="rounded-md border border-space-600 bg-space-800/60 p-2.5">
-              <div className="text-[10px] uppercase tracking-wider text-slate-400">Survive any night 2026–27</div>
+              <div className="text-[11px] uppercase tracking-wider text-slate-400">Survive any night 2026–27</div>
               <div className="mt-1 text-lg font-semibold text-slate-50">{worstH > 0 ? fmtWh(worstWh) : "—"}</div>
               <div className="text-[11px] text-slate-400">worst shadow {worstH > 0 ? fmtDuration(worstH) : "—"}{worstH > 0 && <> · ≈ {(worstWh / WH_PER_KG).toFixed(0)} kg</>}</div>
             </div>
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+          <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
             Energy = load × longest continuous terrain/night shadow ÷ usable depth of discharge. Mass assumes {WH_PER_KG} Wh/kg at pack level.
             Survival heaters, which dominate real lunar-night budgets, belong in the night load. First-order sizing only.
           </p>
