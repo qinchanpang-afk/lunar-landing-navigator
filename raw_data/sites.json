@@ -1,0 +1,118 @@
+[
+  {
+    "id": "shackleton-rim",
+    "name": "Shackleton Crater Rim (Connecting Ridge)",
+    "agency": "NASA Artemis III Candidate",
+    "region": "South Pole",
+    "lat": -89.68,
+    "lon": 197.0,
+    "elev_km": 1.5,
+    "description": "High-elevation ridge adjacent to Shackleton Crater, famous for 'peaks of eternal light' with over 80% annual solar illumination and prime proximity to permanently shadowed water-ice traps.",
+    "snap": {
+      "mode": "max",
+      "radius_km": 2.0,
+      "note": "local summit of the connecting ridge"
+    }
+  },
+  {
+    "id": "shackleton-floor",
+    "name": "Shackleton Crater Floor (PSR)",
+    "agency": "Scientific Cold Trap Reference",
+    "region": "South Pole",
+    "lat": -89.9,
+    "lon": 0.0,
+    "elev_km": -4.2,
+    "description": "Deep interior floor of Shackleton Crater. A Permanently Shadowed Region (PSR) where sunlight never reaches and temperatures stay below 40 K, preserving ancient water ice.",
+    "snap": {
+      "mode": "min",
+      "radius_km": 15.0,
+      "note": "deepest point of Shackleton crater floor"
+    }
+  },
+  {
+    "id": "malapert-massif",
+    "name": "Malapert Massif Peak",
+    "agency": "NASA Artemis III / Relay Candidate",
+    "region": "South Pole",
+    "lat": -86.0,
+    "lon": 357.5,
+    "elev_km": 5.0,
+    "description": "5-km tall mountain peak near the south pole offering nearly uninterrupted Direct-to-Earth (DTE) line-of-sight communication alongside extended solar power windows.",
+    "snap": {
+      "mode": "max",
+      "radius_km": 2.0,
+      "note": "local summit of Malapert massif"
+    }
+  },
+  {
+    "id": "nobile-rim",
+    "name": "Nobile Western Rim (NASA VIPER Target)",
+    "agency": "NASA CLPS / VIPER Region",
+    "region": "South Pole",
+    "lat": -85.42,
+    "lon": 31.62,
+    "elev_km": 1.3,
+    "description": "Targeted for lunar rover volatile prospecting; balances gentle slopes for roving with intermittent sunlight and Earth communication windows.",
+    "snap": {
+      "mode": "max",
+      "radius_km": 0.5,
+      "keep_catalog_on_edge": true,
+      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+    },
+    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+  },
+  {
+    "id": "haworth-rim",
+    "name": "Haworth Rim (Artemis III Candidate)",
+    "agency": "Artemis III Candidate Region",
+    "region": "South Pole",
+    "lat": -86.85,
+    "lon": 354.5,
+    "elev_km": 1.4,
+    "description": "Elevated terrain bordering Haworth Crater, exhibiting dramatic seasonal variations in solar elevation and terrain shadowing.",
+    "snap": {
+      "mode": "max",
+      "radius_km": 0.5,
+      "keep_catalog_on_edge": true,
+      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+    },
+    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+  },
+  {
+    "id": "csa-rover-zone",
+    "name": "Peak Near Shackleton (CSA Rover Target)",
+    "agency": "Canadian Space Agency (CSA) Partner",
+    "region": "South Pole",
+    "lat": -88.78,
+    "lon": 291.3,
+    "elev_km": 1.8,
+    "description": "Representative south polar region aligned with Canada's lunar rover program objectives to demonstrate survival across harsh lunar lighting transitions.",
+    "snap": {
+      "mode": "max",
+      "radius_km": 0.5,
+      "keep_catalog_on_edge": true,
+      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+    },
+    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+  },
+  {
+    "id": "change-6",
+    "name": "Apollo Basin (Chang'e-6 Landing Site)",
+    "agency": "CNSA (Lunar Far Side)",
+    "region": "Southern Far Side",
+    "lat": -41.64,
+    "lon": 206.01,
+    "elev_km": -5.2,
+    "description": "Historic 2024 far-side sample return site. Because it faces away from Earth, Direct-to-Earth (DTE) visibility is 0%, proving why relay satellites like Queqiao-2 are mandatory."
+  },
+  {
+    "id": "apollo-11",
+    "name": "Mare Tranquillitatis (Apollo 11)",
+    "agency": "NASA Apollo Baseline",
+    "region": "Equatorial Near Side",
+    "lat": 0.674,
+    "lon": 23.473,
+    "elev_km": -1.8,
+    "description": "Equatorial baseline site demonstrating standard ~14.7-day lunar daylight cycles, high overhead sun angles, and permanent Earth visibility high in the sky."
+  }
+]

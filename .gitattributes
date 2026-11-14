@@ -1,0 +1,3 @@
+# Gzip-compressed DEM tiles: never apply line-ending conversion or text diffs
+*.dem binary
+*.lbl text eol=lf

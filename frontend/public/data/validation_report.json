@@ -1,0 +1,55 @@
+{
+ "generated_utc": "2026-11-14T16:56:27+00:00",
+ "checks": [
+  {
+   "check": "Apollo 11: mean daylight period ~14.7 Earth days",
+   "pass": true,
+   "detail": "mean=14.78 d over 24 complete lunar days, night=14.75 d, sunlight=49.73%"
+  },
+  {
+   "check": "Apollo 11: max solar elevation > 60 deg",
+   "pass": true,
+   "detail": "max=89.88 deg"
+  },
+  {
+   "check": "Apollo 11: Earth always visible (near side)",
+   "pass": true,
+   "detail": "DTE=100.0%, Earth elev [57.96, 73.95]"
+  },
+  {
+   "check": "Chang'e-6 (far side): 0% DTE",
+   "pass": true,
+   "detail": "DTE=0.0%, Earth elev range [-51.73, -32.87] deg"
+  },
+  {
+   "check": "Shackleton floor: near-0% sunlight",
+   "pass": true,
+   "detail": "sunlight=0.0%, at -89.6251,118.820E, DEM elev=-2.8685 km, mean horizon=22.32 deg"
+  },
+  {
+   "check": "Shackleton Crater Rim (Connecting Ridge): high sunlight",
+   "pass": true,
+   "detail": "sunlight=87.97%, DTE=47.02%, max shadow=74.0 h, DEM elev=1.7285 km"
+  },
+  {
+   "check": "Malapert Massif Peak: high sunlight",
+   "pass": true,
+   "detail": "sunlight=82.57%, DTE=96.36%, max shadow=276.0 h, DEM elev=4.992 km"
+  },
+  {
+   "check": "Shackleton floor sunlight << rim sunlight",
+   "pass": true,
+   "detail": "floor=0.0% vs rim=87.97%"
+  },
+  {
+   "check": "Shackleton floor site coincides with DEM-deepest point near pole",
+   "pass": true,
+   "detail": "deepest point -89.6251,118.820E (-2.869 km); site is 0.00 km away"
+  }
+ ],
+ "notes": [
+  "shackleton-floor: catalog elev -4.2 km vs LOLA DEM -2.869 km (diff +1.33 km) - DEM value used",
+  "nobile-rim: catalog elev 1.3 km vs LOLA DEM 6.419 km (diff +5.12 km) - DEM value used",
+  "haworth-rim: catalog elev 1.4 km vs LOLA DEM -1.082 km (diff -2.48 km) - DEM value used"
+ ]
+}
