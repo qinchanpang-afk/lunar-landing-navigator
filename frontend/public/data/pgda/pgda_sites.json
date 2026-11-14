@@ -1,0 +1,80 @@
+{
+ "source": "NASA GSFC PGDA Lunar Polar Illumination (Mazarico et al. 2011), 2016 release: AVGVISIB_85S_060M_201608 (+ _EARTH), LOLA LDEM_85S_060M, 60 m/px",
+ "url": "https://pgda.gsfc.nasa.gov/products/69",
+ "definition": "fraction of hourly time steps over an 18.6-year lunar nutation cycle in which any part of the solar (or Earth) disc is visible from the surface",
+ "value_png": "DN = round(fraction*250); 255 = no data",
+ "sites": [
+  {
+   "id": "shackleton-rim",
+   "name": "Shackleton Crater Rim (Connecting Ridge)",
+   "lat": -89.68626,
+   "lon": 197.3684,
+   "ours_sun_pct": 87.97,
+   "ours_dte_pct": 47.02,
+   "pgda_sun_pct": 70.67,
+   "pgda_sun_max150_pct": 87.06,
+   "pgda_earth_pct": 49.11,
+   "pgda_earth_max150_pct": 53.75
+  },
+  {
+   "id": "shackleton-floor",
+   "name": "Shackleton Crater Floor (PSR)",
+   "lat": -89.62511,
+   "lon": 118.81963,
+   "ours_sun_pct": 0.0,
+   "ours_dte_pct": 0.0,
+   "pgda_sun_pct": 0.0,
+   "pgda_sun_max150_pct": 0.0,
+   "pgda_earth_pct": 0.0,
+   "pgda_earth_max150_pct": 0.0
+  },
+  {
+   "id": "malapert-massif",
+   "name": "Malapert Massif Peak",
+   "lat": -85.96291,
+   "lon": 357.58523,
+   "ours_sun_pct": 82.57,
+   "ours_dte_pct": 96.36,
+   "pgda_sun_pct": 59.82,
+   "pgda_sun_max150_pct": 68.5,
+   "pgda_earth_pct": 74.62,
+   "pgda_earth_max150_pct": 100.0
+  },
+  {
+   "id": "nobile-rim",
+   "name": "Nobile Western Rim (NASA VIPER Target)",
+   "lat": -85.42,
+   "lon": 31.62,
+   "ours_sun_pct": 52.92,
+   "ours_dte_pct": 65.96,
+   "pgda_sun_pct": 45.87,
+   "pgda_sun_max150_pct": 54.09,
+   "pgda_earth_pct": 64.96,
+   "pgda_earth_max150_pct": 84.52
+  },
+  {
+   "id": "haworth-rim",
+   "name": "Haworth Rim (Artemis III Candidate)",
+   "lat": -86.85,
+   "lon": 354.5,
+   "ours_sun_pct": 0.34,
+   "ours_dte_pct": 0.0,
+   "pgda_sun_pct": 1.17,
+   "pgda_sun_max150_pct": 1.41,
+   "pgda_earth_pct": 0.0,
+   "pgda_earth_max150_pct": 0.0
+  },
+  {
+   "id": "csa-rover-zone",
+   "name": "Peak Near Shackleton (CSA Rover Target)",
+   "lat": -88.78,
+   "lon": 291.3,
+   "ours_sun_pct": 41.2,
+   "ours_dte_pct": 51.39,
+   "pgda_sun_pct": 38.44,
+   "pgda_sun_max150_pct": 44.76,
+   "pgda_earth_pct": 56.92,
+   "pgda_earth_max150_pct": 57.29
+  }
+ ]
+}

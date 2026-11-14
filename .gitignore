@@ -22,3 +22,6 @@ Thumbs.db
 
 # NOTE: frontend/public/data/ (site JSON + dem/ tiles) is generated but intentionally COMMITTED,
 # so the web app runs without the 115 MB DEM or network access to JPL Horizons.
+
+# NASA PGDA illumination rasters (download from https://pgda.gsfc.nasa.gov/products/69)
+raw_data/pgda/*.TIF

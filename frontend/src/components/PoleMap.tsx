@@ -10,6 +10,33 @@ const BASE = `${import.meta.env.BASE_URL}data/basemap/`;
 let metaP: Promise<BasemapMeta> | null = null;
 const loadMeta = () => (metaP ??= fetch(`${BASE}basemap.json`).then((r) => r.json()));
 
+const PGDA = `${import.meta.env.BASE_URL}data/pgda/`;
+type Overlay = "none" | "sun" | "earth";
+const OVERLAYS: [Overlay, string][] = [["sun", "NASA sunlight"], ["earth", "NASA Earth view"], ["none", "Relief only"]];
+
+/** 8-bit value rasters (DN = fraction*250, 255 = no data) for the hover read-out, cached per file. */
+const valCache = new Map<string, Promise<{ data: Uint8ClampedArray; n: number }>>();
+function loadValues(file: string) {
+  let p = valCache.get(file);
+  if (!p) {
+    p = new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas");
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        const g = c.getContext("2d", { willReadFrequently: true })!;
+        g.drawImage(img, 0, 0);
+        resolve({ data: g.getImageData(0, 0, c.width, c.height).data, n: c.width });
+      };
+      img.onerror = reject;
+      img.src = file;
+    });
+    valCache.set(file, p);
+  }
+  return p;
+}
+
 const RAMP = ["#4a3510", "#94640c", "#dc9a1c", "#fbd37c", "#fde9b8"];
 const sunColor = (pct: number) => RAMP[Math.min(RAMP.length - 1, Math.floor((pct / 100) * RAMP.length))];
 
@@ -25,12 +52,22 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
   const [which, setWhich] = useState<"region" | "pole">("region");
   const [cursor, setCursor] = useState<[number, number] | null>(null);
   const [pick, setPick] = useState<[number, number] | null>(null);
+  const [overlay, setOverlay] = useState<Overlay>("sun");
+  const [vals, setVals] = useState<{ data: Uint8ClampedArray; n: number } | null>(null);
+  const [cursorVal, setCursorVal] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     loadMeta().then(setMeta).catch(() => setMeta(null));
   }, []);
   useEffect(() => setPick(null), [which]);
+  useEffect(() => {
+    setVals(null);
+    if (overlay === "none") return;
+    let live = true;
+    loadValues(`${PGDA}${overlay}_${which}_val.png`).then((v) => live && setVals(v)).catch(() => {});
+    return () => { live = false; };
+  }, [overlay, which]);
 
   if (!meta) return <div className="h-64 grid place-items-center text-xs text-slate-500">Loading map…</div>;
   const L = meta.layers[which];
@@ -68,12 +105,27 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
 
       <div className="relative mx-auto w-full max-w-[760px]">
         <img src={`${BASE}${L.file}`} alt={`Shaded relief of the lunar south pole (${which})`} className="block w-full rounded-md" draggable={false} />
+        {overlay !== "none" && (
+          <img
+            src={`${PGDA}${overlay}_${which}.png`} alt="" aria-hidden draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full rounded-md mix-blend-screen"
+          />
+        )}
         <svg
           ref={svgRef}
           viewBox={`0 0 ${S} ${S}`}
           className="absolute inset-0 h-full w-full cursor-crosshair"
-          onMouseMove={(e) => setCursor(eventLatLon(e))}
-          onMouseLeave={() => setCursor(null)}
+          onMouseMove={(e) => {
+            setCursor(eventLatLon(e));
+            if (vals) {
+              const r = svgRef.current!.getBoundingClientRect();
+              const i = Math.floor(((e.clientX - r.left) / r.width) * vals.n);
+              const j = Math.floor(((e.clientY - r.top) / r.height) * vals.n);
+              const dn = i >= 0 && j >= 0 && i < vals.n && j < vals.n ? vals.data[(j * vals.n + i) * 4] : 255;
+              setCursorVal(dn === 255 ? null : dn / 2.5);
+            } else setCursorVal(null);
+          }}
+          onMouseLeave={() => { setCursor(null); setCursorVal(null); }}
           onClick={(e) => setPick(eventLatLon(e))}
         >
           {/* graticule */}
@@ -136,6 +188,11 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
         {cursor && (
           <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-space-950/85 px-1.5 py-0.5 font-mono text-[11px] text-slate-200">
             {cursor[0].toFixed(4)}°, {cursor[1].toFixed(3)}°E
+            {overlay !== "none" && cursorVal != null && (
+              <span className={overlay === "sun" ? "text-amber-200" : "text-sky-200"}>
+                {" "}· NASA {overlay === "sun" ? "sunlight" : "Earth view"} {cursorVal.toFixed(1)}%{overlay === "sun" && cursorVal === 0 ? " (permanent shadow)" : ""}
+              </span>
+            )}
           </div>
         )}
         {pick && (
@@ -155,6 +212,34 @@ export default function PoleMap({ sites, selectedId, onSelect, onPickPoint }: Pr
           </div>
         )}
       </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+        <span className="text-slate-400">Overlay</span>
+        <div className="flex overflow-hidden rounded-md border border-space-600">
+          {OVERLAYS.map(([k, l]) => (
+            <button key={k} type="button" onClick={() => setOverlay(k)} className={`px-2 py-1 ${overlay === k ? (k === "earth" ? "bg-sky-500/20 text-sky-100" : "bg-amber-500/20 text-amber-100") : "bg-space-800 text-slate-400 hover:bg-space-700"}`}>{l}</button>
+          ))}
+        </div>
+        {overlay === "sun" && (
+          <span className="inline-flex flex-wrap items-center gap-1.5 text-slate-300">
+            <span className="inline-block h-2.5 w-4 rounded-sm" style={{ background: "#50aaff" }} /> permanent shadow (cold traps)
+            <span className="ml-1 inline-block h-2.5 w-16 rounded-sm" style={{ background: "linear-gradient(90deg,#5a320a,#ffe28c)" }} /> lit 0 → 100% of time
+          </span>
+        )}
+        {overlay === "earth" && (
+          <span className="inline-flex flex-wrap items-center gap-1.5 text-slate-300">
+            <span className="inline-block h-2.5 w-4 rounded-sm" style={{ background: "#1e1e28" }} /> Earth never visible
+            <span className="ml-1 inline-block h-2.5 w-16 rounded-sm" style={{ background: "linear-gradient(90deg,#0f285a,#96dcff)" }} /> visible 0 → 100% of time
+          </span>
+        )}
+      </div>
+      {overlay !== "none" && (
+        <p className="mt-1 text-[11px] leading-snug text-slate-400">
+          Independent NASA product: LOLA average {overlay === "sun" ? "solar" : "Earth"} visibility over an 18.6-year nutation cycle at ground level, 60 m/px
+          (Mazarico et al. 2011, NASA GSFC PGDA, 2016 release; covers 85°S–90°S). Hover the map to read it. It counts any part of the disc as visible, so it is
+          a long-term reference, not the same definition as this app's 2026–27 centre-of-disc, 2 m mast statistics.
+        </p>
+      )}
 
       <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
         <span className="inline-flex items-center gap-1">marker colour = sunlight 2026–27

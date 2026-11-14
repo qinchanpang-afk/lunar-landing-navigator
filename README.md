@@ -26,7 +26,7 @@ This app answers that interactively, from precomputed data with no API latency. 
 | **Side-by-side comparison** | Up to 4 slots. Each slot follows the main clock, can be shifted by a fixed offset (e.g. a launch slip), or can use its own date. |
 | **Quick demo scenarios** | One click to *Terrain Impact: Shackleton Rim (88% Sun) vs. Crater Floor (0% Sun)* and *Launch Delay Impact: Nobile Rim vs. +14 Days Shift*. |
 | **Custom coordinates** | Enter any latitude and longitude. The browser fetches Horizons ephemerides live and ray-traces LOLA terrain locally in about 5 s. Custom sites persist in `localStorage`. |
-| **South-pole map** | LOLA shaded-relief map (±160 km and ±48 km views) with every polar site coloured by sunlight. Click a marker to open a site, or click anywhere to analyse that exact spot. |
+| **South-pole map** | LOLA shaded-relief map (±160 km and ±48 km views) with every polar site coloured by sunlight, plus switchable **NASA long-term Sun and Earth visibility overlays** (permanently shadowed cold traps in blue) with a hover read-out. Click a marker to open a site, or click anywhere to analyse that exact spot. |
 | **Best nearby spot** | Re-traces the terrain horizon on an 11 × 11 grid (±0.5, ±1 or ±2 km) around any polar site in parallel Web Workers (~8 s). Shows a sunlight / Sun+DTE heat map and the best **lander-safe** cell (slope ≤ 10°), which can be opened as a full site in one click. |
 | **Mission planner** | *Landing-window finder*: every 2026–2027 touchdown time that guarantees N days of continuous Sun (+ Earth link), with the delay until the next window if a launch slips. *Battery sizing*: energy and mass to survive the longest shadow during the mission, and the worst night of the two years. |
 | **Shareable deep links** | The address bar always encodes the site, time, view, audience and comparison slots (e.g. `?site=nobile-rim&t=2026-11-30T06:00Z&view=compare&cmp=nobile-rim,nobile-rim~o336`). A link to a custom site recomputes it for the recipient. |
@@ -144,6 +144,19 @@ From the Moon, Earth barely moves: the Moon's rotation is locked to its orbit. I
 
 **Against the literature.** Gläser et al. (2014, *Icarus* 243, 78–90) found the best-lit point on the Shackleton–de Gerlache connecting ridge to be lit **92.3 %** of the time at 2 m height (20 m/px DTM, 19 years), with the longest darkness at such points typically **3–5 days**. Our Shackleton rim site on the same ridge gives **88.0 %** and **74 h (3.1 d)** on an 80 m DEM over 2 years. A few points lower is expected from the coarser DEM, the shorter window, and our site not being the single optimum point. Mazarico et al. (2011, *Icarus* 211, 1066–1081) describe the same pattern of a few near-continuously lit points beside permanently shadowed floors.
 
+**Against NASA's own long-term illumination maps.** The NASA GSFC PGDA *Lunar Polar Illumination* product (Mazarico et al. 2011, 2016 release, 60 m/px, 85°S–90°S) gives the fraction of hourly steps over an 18.6-year cycle in which any part of the Sun or Earth disc is visible from the ground. `scripts/build_pgda.py` samples it at every polar site:
+
+| Site | Sunlight: ours | NASA at point | NASA best ≤ 150 m | Earth view: ours | NASA at point | NASA best ≤ 150 m |
+|---|---:|---:|---:|---:|---:|---:|
+| Shackleton rim | 88.0 % | 70.7 % | 87.1 % | 47.0 % | 49.1 % | 53.8 % |
+| Shackleton floor | 0.0 % | 0.0 % | 0.0 % | 0.0 % | 0.0 % | 0.0 % |
+| Malapert summit | 82.6 % | 59.8 % | 68.5 % | 96.4 % | 74.6 % | 100 % |
+| Nobile rim | 52.9 % | 45.9 % | 54.1 % | 66.0 % | 65.0 % | 84.5 % |
+| Haworth rim | 0.3 % | 1.2 % | 1.4 % | 0.0 % | 0.0 % | 0.0 % |
+| CSA peak | 41.2 % | 38.4 % | 44.8 % | 51.4 % | 56.9 % | 57.3 % |
+
+The definitions differ (18.6 years vs 2026–27; any part of the disc vs disc centre; ground vs 2 m mast; 60 m vs 80 m DEM), and on sharp summits a few tens of metres of position change the value a lot, so the local best within 150 m is the fairer comparison. Permanent shadow and the steep Haworth site agree at 0–1 %; Shackleton rim, Nobile and the CSA peak agree within a few points of the local best. Malapert sunlight remains higher in our 2-year, 2 m-mast run (82.6 % vs at most 77.6 % within 600 m in NASA's map), which we report rather than tune away.
+
 **Nearby-scan geometry.** The scan rotates the site's Sun/Earth direction vectors into each grid point's local East-North-Up frame (both bodies are effectively at infinity; Earth parallax over 2 km is < 0.001°). The Nobile cross-check above (77.5 % vs 77.5 %) validates this against an independent Horizons query.
 
 The full report is written to `frontend/public/data/validation_report.json`.
@@ -172,6 +185,8 @@ python scripts/build_data.py              # Horizons fetch (cached) + horizons +
 python scripts/build_data.py --offline    # rebuild from cache only
 python scripts/build_dem_tiles.py         # browser DEM tile pyramid + hybrid validation
 python scripts/build_basemap.py           # shaded-relief images for the south-pole map
+python scripts/build_pgda.py              # NASA long-term illumination: site comparison + map overlays
+                                          #   (needs raw_data/pgda/AVGVISIB_85S_060M_201608*.TIF from PGDA)
 ```
 
 The generated `frontend/public/data/` is committed, so the web app runs without the raw DEM.
@@ -196,7 +211,8 @@ JPL Horizons does not send CORS headers, so custom-coordinate requests go to the
 ├── scripts/
 │   ├── build_data.py          # Horizons + LOLA ray-trace + per-step analysis + sanity checks
 │   ├── build_dem_tiles.py     # browser DEM pyramid (80 m / 160 m) + hybrid validation
-│   └── build_basemap.py       # LOLA shaded-relief images for the map view
+│   ├── build_basemap.py       # LOLA shaded-relief images for the map view
+│   └── build_pgda.py          # NASA PGDA long-term illumination: validation + map overlays
 ├── raw_data/
 │   ├── sites.json             # site catalog (+ snapping rules, coordinate sources)
 │   ├── ldem_80s_80m.lbl       # PDS3 label  (the .img itself is git-ignored)
@@ -228,10 +244,11 @@ Each `<site>.json` holds the 360-value horizon mask and, for every 2-hour step, 
 | Data | Provider | Used for |
 |---|---|---|
 | LRO LOLA `LDEM_80S_80M` polar DEM (`LRO-L-LOLA-4-GDR-V1.0`), 80 m/px, 80°S–90°S | NASA GSFC LOLA Science Team via the PDS Geosciences Node — <https://pds-geosciences.wustl.edu/missions/lro/lola.htm> | Horizon ray-tracing, ground height and slope, browser DEM tiles, shaded-relief map |
+| LOLA average Sun and Earth visibility, `AVGVISIB_85S_060M_201608` (+ `_EARTH`), 60 m/px, 18.6-year average | NASA GSFC Planetary Geology, Geophysics and Geochemistry Lab (PGDA) — <https://pgda.gsfc.nasa.gov/products/69> | Independent validation table and the map overlays |
 | Horizons System topocentric apparent az/el of the Sun (10) and Earth (399), DE441 | NASA JPL Solar System Dynamics — <https://ssd.jpl.nasa.gov/horizons/> | Every Sun/Earth position in the app (precomputed sites and live custom sites) |
 | Landing-site catalog (`raw_data/sites.json`) | Project team, from public mission descriptions; three sites use official coordinates supplied by the team | Site list |
 
-No sunlight, Earth-visibility or terrain number in the app is generated by AI or mocked: each comes from code applied to the two NASA datasets above.
+No sunlight, Earth-visibility or terrain number in the app is generated by AI or mocked: each comes from code applied to the NASA datasets above.
 
 ---
 
@@ -256,7 +273,7 @@ In line with the Space Apps rules on SI use:
 
 **Science used for validation**
 * Gläser, P. et al. (2014). Illumination conditions at the lunar south pole using high resolution Digital Terrain Models from LOLA. *Icarus* 243, 78–90. doi:10.1016/j.icarus.2014.08.013
-* Mazarico, E. et al. (2011). Illumination conditions of the lunar polar regions using LOLA topography. *Icarus* 211, 1066–1081. doi:10.1016/j.icarus.2010.10.030
+* Mazarico, E. et al. (2011). Illumination conditions of the lunar polar regions using LOLA topography. *Icarus* 211, 1066–1081. doi:10.1016/j.icarus.2010.10.030 — basis of the NASA GSFC PGDA *Lunar Polar Illumination* maps used for validation (<https://pgda.gsfc.nasa.gov/products/69>).
 
 **Software (open source)**
 * Python: NumPy, rasterio (GDAL), pyproj (PROJ), requests, Pillow

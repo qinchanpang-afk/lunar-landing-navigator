@@ -37,7 +37,7 @@ AetherRidge is a web app that shows, for any landing site and any moment in 2026
 * **Countdowns** — time to the next sunset (power loss) and Earthset (communications loss), interpolated below the 2-hour data step.
 * **Power & comms statistics** — sunlight %, Direct-to-Earth (DTE) %, longest shadow, longest DTE blackout, flat-panel and vertical sun-tracking panel efficiency.
 * **Side-by-side comparison and launch-slip simulation** — up to four slots, each on the main clock, shifted by a delay (e.g. +14 days) or on its own date; one-click demo scenarios.
-* **South-pole map** — LOLA shaded relief with every site coloured by sunlight; click anywhere to analyse that exact spot.
+* **South-pole map** — LOLA shaded relief with every site coloured by sunlight and NASA's long-term Sun / Earth visibility overlays (cold traps in blue); click anywhere to analyse that exact spot.
 * **Best nearby spot** — re-traces the horizon on an 11 × 11 grid around a site (in parallel in the browser, ~8 s) and finds the best lander-safe cell (slope ≤ 10°).
 * **Mission planner** — landing windows that guarantee N days of continuous Sun (+ Earth link), the waiting time if a window is missed, and battery energy/mass for the longest shadow.
 * **Custom coordinates** — any latitude/longitude on the Moon; ephemerides fetched live from Horizons and terrain traced in the browser.
@@ -48,7 +48,7 @@ AetherRidge is a web app that shows, for any landing site and any moment in 2026
 2. It queries JPL Horizons for topocentric apparent azimuth/elevation of the Sun and Earth every 2 hours for 2026–2027 (Moon MEAN_ME frame, airless — no refraction).
 3. A body is visible when its elevation exceeds the horizon at its azimuth. The pipeline precomputes visibility, power efficiency and hours to the next set/rise for every step and exports compact JSON, so the web app runs instantly with no API latency.
 4. For custom sites and the nearby scan, a compressed 80 m/160 m tile pyramid of the same DEM is ray-traced in the browser (within 0.1 percentage point of the full pipeline). The nearby scan rotates the site's Sun/Earth directions into each grid point's local frame; an independent Horizons query at the best Nobile cell confirmed the result (77.5 % vs 77.5 %).
-5. Automated checks run on every build (9/9 pass): Apollo 11 has 14.78-day days and the Sun reaches 89.9°; Chang'e-6 on the far side has 0 % DTE; Shackleton's floor is 0 % lit while its rim is 88 %. Results agree with published LOLA illumination studies (Gläser et al. 2014: best ridge point 92.3 %, darkness 3–5 days; ours 88.0 %, 3.1 days).
+5. Automated checks run on every build (9/9 pass): Apollo 11 has 14.78-day days and the Sun reaches 89.9°; Chang'e-6 on the far side has 0 % DTE; Shackleton's floor is 0 % lit while its rim is 88 %. Results agree with published LOLA illumination studies (Gläser et al. 2014: best ridge point 92.3 %, darkness 3–5 days; ours 88.0 %, 3.1 days) and with NASA's own 18.6-year LOLA illumination maps (Shackleton rim 88.0 % vs 87.1 % best within 150 m; permanent shadow 0 % vs 0 %).
 
 ### Key findings
 * Shackleton rim vs. its floor, about 13 km apart: **88 % vs 0 %** sunlight.
@@ -75,6 +75,7 @@ The problem framing, physics rules (no refraction, 100 km curvature-corrected ho
 
 ## NASA data
 * **LRO Lunar Orbiter Laser Altimeter (LOLA) — `LDEM_80S_80M` south-polar DEM** (`LRO-L-LOLA-4-GDR-V1.0`), NASA PDS Geosciences Node: https://pds-geosciences.wustl.edu/missions/lro/lola.htm — horizon ray-tracing, ground height, slope, map.
+* **LOLA average Sun and Earth visibility maps** (`AVGVISIB_85S_060M_201608` and `_EARTH`, 60 m/px, 18.6-year average; Mazarico et al. 2011), NASA GSFC PGDA: https://pgda.gsfc.nasa.gov/products/69 — independent validation of every polar site and switchable map overlays (permanently shadowed regions, long-term sunlight, Earth visibility).
 * **NASA JPL Horizons System** (Solar System Dynamics, DE441 ephemeris): https://ssd.jpl.nasa.gov/horizons/ — topocentric apparent azimuth/elevation of the Sun and Earth for every site, precomputed and live.
 
 ## Space agency partner & other data

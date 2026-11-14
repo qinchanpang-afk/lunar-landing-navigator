@@ -4,6 +4,8 @@ import { BookOpen, CheckCircle2, ChevronDown, ShieldCheck, XCircle } from "lucid
 interface Report { generated_utc: string; checks: { check: string; pass: boolean; detail: string }[]; notes: string[] }
 interface HybridRow { id: string; mask_rms_deg: number; mask_max_abs_deg: number; sun_pct_80m: number; sun_pct_hybrid: number; dte_pct_80m: number; dte_pct_hybrid: number }
 
+interface PgdaRow { id: string; name: string; ours_sun_pct: number; ours_dte_pct: number; pgda_sun_pct: number | null; pgda_sun_max150_pct: number | null; pgda_earth_pct: number | null; pgda_earth_max150_pct: number | null }
+
 const DATA = `${import.meta.env.BASE_URL}data/`;
 
 /** Independent published results to compare against (values quoted from the cited abstracts). */
@@ -38,11 +40,13 @@ export default function ValidationPanel() {
   const [open, setOpen] = useState(false);
   const [rep, setRep] = useState<Report | null>(null);
   const [hyb, setHyb] = useState<HybridRow[]>([]);
+  const [pgda, setPgda] = useState<PgdaRow[]>([]);
 
   useEffect(() => {
     if (!open || rep) return;
     fetch(`${DATA}validation_report.json`).then((r) => r.json()).then(setRep).catch(() => {});
     fetch(`${DATA}dem/meta.json`).then((r) => r.json()).then((m) => setHyb(m.validation ?? [])).catch(() => {});
+    fetch(`${DATA}pgda/pgda_sites.json`).then((r) => r.json()).then((m) => setPgda(m.sites ?? [])).catch(() => {});
   }, [open, rep]);
 
   const passed = rep?.checks.filter((c) => c.pass).length ?? 0;
@@ -92,6 +96,48 @@ export default function ValidationPanel() {
               </table>
             </div>
           </div>
+
+          {pgda.length > 0 && (
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-slate-400">Against NASA's long-term LOLA illumination maps (independent product)</div>
+              <div className="mt-1.5 overflow-x-auto">
+                <table className="w-full min-w-[560px] text-left text-[11px]">
+                  <thead className="text-slate-500">
+                    <tr>
+                      <th className="py-1 font-normal">Site</th>
+                      <th className="font-normal">Sunlight: this tool</th>
+                      <th className="font-normal">NASA at point</th>
+                      <th className="font-normal">NASA best ≤150 m</th>
+                      <th className="font-normal">Earth view: this tool</th>
+                      <th className="font-normal">NASA at point</th>
+                      <th className="font-normal">NASA best ≤150 m</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-mono text-slate-300">
+                    {pgda.map((p) => (
+                      <tr key={p.id} className="border-t border-space-800">
+                        <td className="py-1 pr-2 font-sans">{p.name.split(" (")[0]}</td>
+                        <td className="text-amber-100">{p.ours_sun_pct.toFixed(1)}%</td>
+                        <td>{p.pgda_sun_pct?.toFixed(1)}%</td>
+                        <td>{p.pgda_sun_max150_pct?.toFixed(1)}%</td>
+                        <td className="text-sky-100">{p.ours_dte_pct.toFixed(1)}%</td>
+                        <td>{p.pgda_earth_pct?.toFixed(1)}%</td>
+                        <td>{p.pgda_earth_max150_pct?.toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-slate-400">
+                NASA GSFC PGDA product (Mazarico et al. 2011, 2016 release): fraction of hourly steps over an 18.6-year cycle in which any part of the
+                Sun or Earth disc is visible from the ground, on a 60 m DEM. This tool: 2026–2027, disc centre, 2 m mast, 80 m DEM. The
+                permanently shadowed floor and steep Haworth site agree at ~0–1%, and the rim, Nobile and CSA sites agree within a few points of the
+                local best. On sharp summits a few tens of metres of position or DEM difference moves the value a lot, which is why the
+                ≤150 m column matches far better than the single point (e.g. Shackleton rim 88.0% vs 87.1%; Malapert Earth view 96.4% vs 100%).
+                Malapert sunlight stays higher here (82.6% vs ≤77.6% within 600 m), consistent with our 2 m mast and 2-year window.
+              </p>
+            </div>
+          )}
 
           {hyb.length > 0 && (
             <div>
