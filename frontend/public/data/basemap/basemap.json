@@ -1,0 +1,19 @@
+{
+ "source": "LRO LOLA LDEM_80S_80M shaded relief (display only)",
+ "layers": {
+  "region": {
+   "file": "region.jpg",
+   "x0_m": -160000.0,
+   "y0_m": 160000.0,
+   "size_m": 320000.0,
+   "px": 1000
+  },
+  "pole": {
+   "file": "pole.jpg",
+   "x0_m": -48000.0,
+   "y0_m": 48000.0,
+   "size_m": 96000.0,
+   "px": 1200
+  }
+ }
+}

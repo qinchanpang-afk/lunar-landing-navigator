@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Columns2, Compass, GraduationCap, Moon, Satellite, Wrench } from "lucide-react";
+import { AlertTriangle, Check, Columns2, Compass, GraduationCap, Link as LinkIcon, Map as MapIcon, Moon, Satellite, Wrench } from "lucide-react";
 import { registerSite, useIndex, useSite } from "./lib/data";
 import { clearCustomSites, loadCustomSites, removeCustomSite } from "./lib/storage";
 import type { Audience, SiteMeta } from "./lib/types";
-import CustomSiteForm from "./components/CustomSiteForm";
+import CustomSiteForm, { type SiteRequest } from "./components/CustomSiteForm";
+import PoleMap from "./components/PoleMap";
+import NearbyScan from "./components/NearbyScan";
+import MissionPlanner from "./components/MissionPlanner";
+import ValidationPanel from "./components/ValidationPanel";
+import { buildUrl, customIdCoords, readUrl, type View } from "./lib/urlState";
 import { bodyState, clamp, spanHours, startMs } from "./lib/time";
 import SiteList from "./components/SiteList";
 import TimeControls from "./components/TimeControls";
@@ -17,6 +22,8 @@ import Explainer from "./components/Explainer";
 
 const T0_MS = Date.parse("2026-01-01T00:00Z");
 const DEFAULT_SPAN_H = 17518;
+const URL0 = readUrl();
+const isCustomId = (id?: string) => !!id && id.startsWith("custom-");
 
 function Seg<T extends string | number>({ value, options, onChange }: { value: T; options: [T, string][]; onChange: (v: T) => void }) {
   return (
@@ -35,22 +42,29 @@ function Seg<T extends string | number>({ value, options, onChange }: { value: T
 
 export default function App() {
   const { index, error } = useIndex();
-  const [selectedId, setSelectedId] = useState("shackleton-rim");
-  const [audience, setAudience] = useState<Audience>("planner");
-  const [view, setView] = useState<"single" | "compare">("single");
-  const [tH, setTHRaw] = useState(() => clamp((Date.now() - T0_MS) / 3_600_000, 0, DEFAULT_SPAN_H));
+  // Custom sites only become loadable after they are restored/recomputed, so start on a catalogue site.
+  const [selectedId, setSelectedId] = useState(URL0.site && !isCustomId(URL0.site) ? URL0.site : "shackleton-rim");
+  const [audience, setAudience] = useState<Audience>(URL0.aud ?? "planner");
+  const [view, setView] = useState<View>(URL0.view ?? "single");
+  const [tH, setTHRaw] = useState(() => clamp(((URL0.tMs ?? Date.now()) - T0_MS) / 3_600_000, 0, DEFAULT_SPAN_H));
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(24);
   const [center, setCenter] = useState<CenterMode>("north");
   const [panel, setPanel] = useState<PanelMode>("horizontal");
   const [windowDays, setWindowDays] = useState(30);
-  const [slots, setSlots] = useState<Slot[]>([
+  const [slots, setSlots] = useState<Slot[]>(URL0.slots ?? [
     { key: 1, id: "shackleton-rim", linked: true, tH: 0 },
     { key: 2, id: "malapert-massif", linked: true, tH: 0 },
     { key: 3, id: "apollo-11", linked: true, tH: 0 },
   ]);
 
   const [customSites, setCustomSites] = useState<SiteMeta[]>([]);
+  const [siteRequest, setSiteRequest] = useState<SiteRequest | null>(null);
+  const requestSite = useCallback((lat: number, lon: number, name = "") => {
+    setSiteRequest({ lat, lon, name, nonce: Date.now() });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+  const [copied, setCopied] = useState(false);
   const allSites = useMemo(() => [...(index?.sites ?? []), ...customSites], [index, customSites]);
   const addCustom = (m: SiteMeta) => {
     setCustomSites((cs) => [...cs.filter((c) => c.id !== m.id), m]);
@@ -75,14 +89,27 @@ export default function App() {
   useEffect(() => {
     let live = true;
     loadCustomSites().then((list) => {
-      if (!live || !list.length) return;
+      if (!live) return;
       list.forEach(({ detail }) => registerSite(detail));
-      setCustomSites((cs) => [...cs.filter((c) => !list.some((l) => l.meta.id === c.id)), ...list.map((l) => l.meta)]);
+      if (list.length) setCustomSites((cs) => [...cs.filter((c) => !list.some((l) => l.meta.id === c.id)), ...list.map((l) => l.meta)]);
+      // A shared link to a custom site: open it if this browser has it, otherwise recompute it.
+      if (isCustomId(URL0.site)) {
+        if (list.some((l) => l.meta.id === URL0.site)) setSelectedId(URL0.site!);
+        else {
+          const c = customIdCoords(URL0.site!);
+          if (c) requestSite(c[0], c[1], "Shared custom site");
+        }
+      }
     });
     return () => {
       live = false;
     };
   }, []);
+
+  // Unknown catalogue id in a shared link -> fall back to the default site.
+  useEffect(() => {
+    if (index && !isCustomId(selectedId) && !index.sites.some((s) => s.id === selectedId)) setSelectedId("shackleton-rim");
+  }, [index, selectedId]);
 
   const site = useSite(selectedId);
   const spanH = site ? spanHours(site) : DEFAULT_SPAN_H;
@@ -126,6 +153,24 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Keep the address bar a shareable deep link (debounced; paused during playback).
+  const shareUrl = buildUrl({ site: selectedId, tMs: T0_MS + tH * 3_600_000, view, aud: audience, slots });
+  useEffect(() => {
+    if (playing) return;
+    const h = setTimeout(() => window.history.replaceState(null, "", shareUrl), 300);
+    return () => clearTimeout(h);
+  }, [shareUrl, playing]);
+  const copyLink = async () => {
+    window.history.replaceState(null, "", shareUrl);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      window.prompt("Copy this link", window.location.href);
+    }
+  };
+
   const events = useMemo(() => {
     if (!site) return null;
     const s = bodyState(site.sun, site.horizon_mask_deg, tH, site.time.step_h);
@@ -166,6 +211,9 @@ export default function App() {
               <button type="button" onClick={() => setView("compare")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 ${view === "compare" ? "bg-violet-500/20 text-violet-200" : "bg-space-800 text-slate-400"}`}>
                 <Columns2 size={13} /> Compare <span className="font-mono text-[10px] opacity-70">{slots.length}</span>
               </button>
+              <button type="button" onClick={() => setView("map")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 ${view === "map" ? "bg-sky-500/20 text-sky-200" : "bg-space-800 text-slate-400"}`}>
+                <MapIcon size={13} /> Map
+              </button>
             </div>
             <div className="flex rounded-md overflow-hidden border border-space-600 text-xs">
               <button type="button" onClick={() => setAudience("planner")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 ${audience === "planner" ? "bg-emerald-500/15 text-emerald-200" : "bg-space-800 text-slate-400"}`} title="Engineering view">
@@ -175,6 +223,14 @@ export default function App() {
                 <GraduationCap size={13} /> <span className="hidden min-[440px]:inline">Explorer</span>
               </button>
             </div>
+            <button
+              type="button" onClick={copyLink}
+              className="inline-flex items-center gap-1 rounded-md border border-space-600 bg-space-800 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-space-700"
+              title="Copy a link to exactly this site, time and view"
+            >
+              {copied ? <Check size={13} className="text-emerald-300" /> : <LinkIcon size={13} />}
+              <span className="hidden min-[440px]:inline">{copied ? "Copied" : "Share"}</span>
+            </button>
           </div>
         </div>
       </header>
@@ -183,7 +239,7 @@ export default function App() {
         <aside className="lg:sticky lg:top-[68px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto pr-1">
           {index ? (
             <div className="space-y-3">
-              <CustomSiteForm onAdded={addCustom} />
+              <CustomSiteForm onAdded={addCustom} request={siteRequest} />
               <SiteList
                 sites={allSites}
                 selectedId={selectedId}
@@ -207,7 +263,13 @@ export default function App() {
             nextEarthEvent={events?.earth ?? { label: "Next Earthset", dt: null }}
           />
 
-          {view === "compare" && index ? (
+          {view === "map" && index ? (
+            <PoleMap
+              sites={allSites} selectedId={selectedId}
+              onSelect={(id) => { setSelectedId(id); setView("single"); }}
+              onPickPoint={(lat, lon) => requestSite(lat, lon)}
+            />
+          ) : view === "compare" && index ? (
             <CompareView sites={allSites} slots={slots} setSlots={setSlots} tH={tH} setTH={setTH} t0ms={t0ms} spanH={spanH} />
           ) : !site ? (
             <div className="h-64 grid place-items-center text-sm text-slate-500">Loading site data…</div>
@@ -275,11 +337,17 @@ export default function App() {
                 </div>
               </section>
 
+              <MissionPlanner site={site} tH={tH} t0ms={t0ms} setTH={setTH} />
+
+              <NearbyScan site={site} onAddCustom={(lat, lon, name) => requestSite(lat, lon, name)} />
+
               {audience === "explorer" && <Explainer />}
 
               <SiteStats site={site} audience={audience} />
 
               {audience === "planner" && <Explainer />}
+
+              <ValidationPanel />
             </>
           )}
 

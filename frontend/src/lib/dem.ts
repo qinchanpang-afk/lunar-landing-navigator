@@ -48,8 +48,11 @@ async function gunzipIfNeeded(buf: ArrayBuffer): Promise<ArrayBuffer> {
 
 class DemLevel {
   private tiles = new Map<string, Promise<Int16Array | null>>();
-  private ready = new Map<string, Int16Array | null>();
-  constructor(readonly m: LevelMeta, readonly nodata: number, readonly scale: number) {}
+  /** decoded tiles by numeric index tr * tiles_x + tc (fast lookup in the ray-trace inner loop) */
+  private ready: (Int16Array | null | undefined)[];
+  constructor(readonly m: LevelMeta, readonly nodata: number, readonly scale: number) {
+    this.ready = new Array(m.tiles_x * m.tiles_y);
+  }
 
   private load(tr: number, tc: number) {
     const key = `${tr}_${tc}`;
@@ -68,7 +71,7 @@ class DemLevel {
           return a;
         })
         .then((a) => {
-          this.ready.set(key, a);
+          this.ready[tr * this.m.tiles_x + tc] = a;
           return a;
         });
       this.tiles.set(key, p);
@@ -93,7 +96,7 @@ class DemLevel {
   private dn(row: number, col: number): number {
     const { tile: T, width, height } = this.m;
     if (row < 0 || col < 0 || row >= height || col >= width) return NaN;
-    const a = this.ready.get(`${Math.floor(row / T)}_${Math.floor(col / T)}`);
+    const a = this.ready[Math.floor(row / T) * this.m.tiles_x + Math.floor(col / T)];
     if (!a) return NaN;
     const v = a[(row % T) * T + (col % T)];
     return v === this.nodata ? NaN : v;

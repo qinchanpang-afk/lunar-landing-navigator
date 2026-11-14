@@ -22,6 +22,11 @@ This app answers that interactively, from precomputed data with no API latency. 
 | **Side-by-side comparison** | Up to 4 slots. Each slot follows the main clock, can be shifted by a fixed offset (e.g. a launch slip), or can use its own date. |
 | **Quick demo scenarios** | One click to *Terrain Impact: Shackleton Rim (88% Sun) vs. Crater Floor (0% Sun)* and *Launch Delay Impact: Nobile Rim vs. +14 Days Shift*. |
 | **Custom coordinates** | Enter any latitude and longitude. The browser fetches Horizons ephemerides live and ray-traces LOLA terrain locally in about 5 s. Custom sites persist in `localStorage`. |
+| **South-pole map** | LOLA shaded-relief map (±160 km and ±48 km views) with every polar site coloured by sunlight. Click a marker to open a site, or click anywhere to analyse that exact spot. |
+| **Best nearby spot** | Re-traces the terrain horizon on an 11 × 11 grid (±0.5, ±1 or ±2 km) around any polar site in parallel Web Workers (~8 s). Shows a sunlight / Sun+DTE heat map and the best **lander-safe** cell (slope ≤ 10°), which can be opened as a full site in one click. |
+| **Mission planner** | *Landing-window finder*: every 2026–2027 touchdown time that guarantees N days of continuous Sun (+ Earth link), with the delay until the next window if a launch slips. *Battery sizing*: energy and mass to survive the longest shadow during the mission, and the worst night of the two years. |
+| **Shareable deep links** | The address bar always encodes the site, time, view, audience and comparison slots (e.g. `?site=nobile-rim&t=2026-11-30T06:00Z&view=compare&cmp=nobile-rim,nobile-rim~o336`). A link to a custom site recomputes it for the recipient. |
+| **Validation & trust panel** | All pipeline self-checks, a comparison with published LOLA illumination studies, and browser-vs-pipeline accuracy, inside the app. |
 | **Two audiences** | *Planner* mode gives exact angles, statistics and a CSV export of the full 2-hourly series. *Explorer* mode adds plain-language explanations: why the pole is extreme, why there is no refraction, why Earth wobbles. |
 
 ---
@@ -40,6 +45,8 @@ This app answers that interactively, from precomputed data with no API latency. 
 | Apollo 11, Mare Tranquillitatis | 49.7 % | 100 % | 49.7 % | 356 h | 14.78-day daylight periods, Sun up to 89.9° |
 
 † Official coordinates used as given; flagged in the app as *pending verification*.
+
+**A few hundred metres matter as much as the region.** The *Best nearby spot* scan around the Nobile rim coordinates finds a lander-safe cell (5° slope) **2.15 km SW** with **77.5 %** sunlight instead of 52.9 %, and a longest shadow of 11 days instead of 22. A full run at that point with its own live Horizons ephemeris confirms 77.5 %.
 
 ---
 
@@ -131,6 +138,10 @@ From the Moon, Earth barely moves: the Moon's rotation is locked to its orbit. I
 * Shackleton floor: **0 % sunlight**, and the site coincides with the DEM's deepest point near the pole.
 * Shackleton rim (88.0 %) and Malapert (82.6 %): high sunlight. Rim sunlight far exceeds floor sunlight.
 
+**Against the literature.** Gläser et al. (2014, *Icarus* 243, 78–90) found the best-lit point on the Shackleton–de Gerlache connecting ridge to be lit **92.3 %** of the time at 2 m height (20 m/px DTM, 19 years), with the longest darkness at such points typically **3–5 days**. Our Shackleton rim site on the same ridge gives **88.0 %** and **74 h (3.1 d)** on an 80 m DEM over 2 years. A few points lower is expected from the coarser DEM, the shorter window, and our site not being the single optimum point. Mazarico et al. (2011, *Icarus* 211, 1066–1081) describe the same pattern of a few near-continuously lit points beside permanently shadowed floors.
+
+**Nearby-scan geometry.** The scan rotates the site's Sun/Earth direction vectors into each grid point's local East-North-Up frame (both bodies are effectively at infinity; Earth parallax over 2 km is < 0.001°). The Nobile cross-check above (77.5 % vs 77.5 %) validates this against an independent Horizons query.
+
 The full report is written to `frontend/public/data/validation_report.json`.
 
 ### Data quality and coordinate snapping
@@ -156,6 +167,7 @@ pip install -r requirements.txt
 python scripts/build_data.py              # Horizons fetch (cached) + horizons + JSON + checks
 python scripts/build_data.py --offline    # rebuild from cache only
 python scripts/build_dem_tiles.py         # browser DEM tile pyramid + hybrid validation
+python scripts/build_basemap.py           # shaded-relief images for the south-pole map
 ```
 
 The generated `frontend/public/data/` is committed, so the web app runs without the raw DEM.
@@ -179,16 +191,17 @@ JPL Horizons does not send CORS headers, so custom-coordinate requests go to the
 ```
 ├── scripts/
 │   ├── build_data.py          # Horizons + LOLA ray-trace + per-step analysis + sanity checks
-│   └── build_dem_tiles.py     # browser DEM pyramid (80 m / 160 m) + hybrid validation
+│   ├── build_dem_tiles.py     # browser DEM pyramid (80 m / 160 m) + hybrid validation
+│   └── build_basemap.py       # LOLA shaded-relief images for the map view
 ├── raw_data/
 │   ├── sites.json             # site catalog (+ snapping rules, coordinate sources)
 │   ├── ldem_80s_80m.lbl       # PDS3 label  (the .img itself is git-ignored)
 │   └── cache/                 # raw Horizons responses (git-ignored)
 ├── frontend/
-│   ├── public/data/           # sites_index.json, <site>.json, validation_report.json, dem/
+│   ├── public/data/           # sites_index.json, <site>.json, validation_report.json, dem/, basemap/
 │   └── src/
-│       ├── components/        # Panorama (canvas), SkyDome (SVG), Timeline (Recharts), CompareView, …
-│       └── lib/               # time engine, Horizons client, DEM ray-tracer, custom-site analysis, storage
+│       ├── components/        # Panorama, SkyDome, Timeline, CompareView, PoleMap, NearbyScan, MissionPlanner, ValidationPanel, …
+│       └── lib/               # time engine, Horizons client, DEM ray-tracer (+ worker), nearby scan, planner, URL state, storage
 └── docs/                      # challenge brief, Horizons API notes
 ```
 

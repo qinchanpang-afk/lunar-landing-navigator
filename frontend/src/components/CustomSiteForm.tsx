@@ -1,15 +1,25 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Crosshair, Loader2 } from "lucide-react";
 import { computeCustomSite } from "../lib/custom";
 import { registerSite } from "../lib/data";
 import { saveCustomSite } from "../lib/storage";
 import type { SiteMeta } from "../lib/types";
 
-interface Props {
-  onAdded: (meta: SiteMeta) => void;
+export interface SiteRequest {
+  lat: number;
+  lon: number;
+  name: string;
+  /** changes on every request so the same point can be re-requested */
+  nonce: number;
 }
 
-export default function CustomSiteForm({ onAdded }: Props) {
+interface Props {
+  onAdded: (meta: SiteMeta) => void;
+  /** external request (map click, nearby scan, shared link) - opens the form, fills it and computes */
+  request?: SiteRequest | null;
+}
+
+export default function CustomSiteForm({ onAdded, request }: Props) {
   const [open, setOpen] = useState(false);
   const [lat, setLat] = useState("");
   const [lon, setLon] = useState("");
@@ -25,15 +35,18 @@ export default function CustomSiteForm({ onAdded }: Props) {
   const valid = lat.trim() !== "" && lon.trim() !== "" && isFinite(latN) && isFinite(lonN) && latN >= -90 && latN <= 90 && isFinite(Number(elev));
   const polar = valid && latN <= -80;
 
-  const run = async () => {
-    if (!valid || busy) return;
+  const run = async (override?: { lat: number; lon: number; name: string }) => {
+    const latV = override ? override.lat : latN;
+    const lonV = override ? override.lon : lonN;
+    const nameV = override ? override.name : name.trim();
+    if ((!override && !valid) || busy) return;
     setBusy(true);
     setErr(null);
     abort.current = new AbortController();
     const t0 = performance.now();
     try {
       const { detail, meta } = await computeCustomSite(
-        { name: name.trim(), lat: latN, lon: lonN, elevKm: Number(elev) || 0 },
+        { name: nameV, lat: latV, lon: lonV, elevKm: Number(elev) || 0 },
         setMsg,
         abort.current.signal,
       );
@@ -49,6 +62,18 @@ export default function CustomSiteForm({ onAdded }: Props) {
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    if (!request) return;
+    const lat4 = Number(request.lat.toFixed(4));
+    const lon4 = Number(request.lon.toFixed(4));
+    setOpen(true);
+    setLat(String(lat4));
+    setLon(String(lon4));
+    setName(request.name);
+    run({ lat: lat4, lon: lon4, name: request.name });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request?.nonce]);
 
   const field = "w-full rounded-md border border-space-600 bg-space-800 px-2 py-1 font-mono text-xs text-slate-100 focus:border-sky-400/60 focus:outline-none";
 
