@@ -53,6 +53,29 @@ export function buildUrl(s: { site: string; tMs: number; view: View; aud: Audien
   return `${window.location.pathname}?${q.toString()}`;
 }
 
+/** The navigator's last view (query string), so the landing page's "Launch" button reopens where the visitor left off. */
+const LAST_KEY = "aetherridge:last-view";
+export const DEFAULT_APP_URL = "/?site=shackleton-rim";
+
+export function saveLastView(search: string) {
+  try {
+    if (new URLSearchParams(search).has("site")) localStorage.setItem(LAST_KEY, search);
+  } catch {
+    /* storage blocked: Launch falls back to the default site */
+  }
+}
+
+/** "/?site=…" for the last view, else the default site. Always the root path, so it never depends on a rewrite. */
+export function lastAppUrl(): string {
+  try {
+    const s = localStorage.getItem(LAST_KEY);
+    if (s && new URLSearchParams(s).has("site")) return `/${s.startsWith("?") ? s : `?${s}`}`;
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_APP_URL;
+}
+
 /** custom-<lat>_<lon> -> [lat, lon] */
 export function customIdCoords(id: string): [number, number] | null {
   const m = /^custom-(-?\d+(?:\.\d+)?)_(-?\d+(?:\.\d+)?)$/.exec(id);

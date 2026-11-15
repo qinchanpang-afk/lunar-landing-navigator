@@ -12,7 +12,7 @@ import NowCard, { type StartAction } from "./components/NowCard";
 import NearbyScan from "./components/NearbyScan";
 import MissionPlanner from "./components/MissionPlanner";
 import ValidationPanel from "./components/ValidationPanel";
-import { buildUrl, customIdCoords, readUrl, type View } from "./lib/urlState";
+import { buildUrl, customIdCoords, readUrl, saveLastView, type View } from "./lib/urlState";
 import { bodyState, clamp, spanHours, startMs } from "./lib/time";
 import SiteList from "./components/SiteList";
 import TimeControls from "./components/TimeControls";
@@ -199,7 +199,10 @@ export default function App() {
   const shareUrl = buildUrl({ site: selectedId, tMs: T0_MS + tH * 3_600_000, view, aud: audience, slots });
   useEffect(() => {
     if (playing) return;
-    const h = setTimeout(() => window.history.replaceState(null, "", shareUrl), 300);
+    const h = setTimeout(() => {
+      window.history.replaceState(null, "", shareUrl);
+      saveLastView(window.location.search);
+    }, 300);
     return () => clearTimeout(h);
   }, [shareUrl, playing]);
   const copyLink = async () => {
