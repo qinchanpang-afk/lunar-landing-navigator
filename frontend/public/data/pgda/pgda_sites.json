@@ -54,7 +54,7 @@
   },
   {
    "id": "haworth-rim",
-   "name": "Haworth Rim (Artemis III Candidate)",
+   "name": "Haworth Crater Floor (near centre)",
    "lat": -86.85,
    "lon": 354.5,
    "ours_sun_pct": 0.34,
@@ -66,7 +66,7 @@
   },
   {
    "id": "csa-rover-zone",
-   "name": "Peak Near Shackleton (CSA Rover Target)",
+   "name": "Peak Near Shackleton (CSA Rover Scenario)",
    "lat": -88.78,
    "lon": 291.3,
    "ours_sun_pct": 41.2,

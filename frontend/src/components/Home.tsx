@@ -219,7 +219,7 @@ export default function Home() {
                 <ShieldCheck className="text-emerald-300" /> Checked three ways
               </h2>
               <ul className="mt-5 space-y-3 text-slate-300">
-                <li><b className="text-slate-100">9/9 automated physics checks</b> on every build: Apollo 11 day length, Chang'e-6 never sees Earth, Shackleton floor in permanent shadow.</li>
+                <li><b className="text-slate-100">9/9 automated physics checks</b> each time the data pipeline runs: Apollo 11 day length, Chang'e-6 never sees Earth, Shackleton floor in permanent shadow.</li>
                 <li><b className="text-slate-100">Published research:</b> rim sunlight and longest night agree with Gläser et al. 2014 and Mazarico et al. 2011.</li>
                 <li><b className="text-slate-100">NASA's own illumination maps</b> (GSFC PGDA, 18.6 years) for every polar site. Where we differ, at Malapert, we say why instead of tuning.</li>
               </ul>
@@ -232,7 +232,7 @@ export default function Home() {
                     <tr><th className="py-1.5 font-medium">Site</th><th className="py-1.5 text-right font-medium">AetherRidge</th><th className="py-1.5 text-right font-medium">NASA</th></tr>
                   </thead>
                   <tbody className="font-mono text-slate-200">
-                    {[["Shackleton rim", "88.0", "87.1"], ["Shackleton floor", "0.0", "0.0"], ["Nobile rim", "52.9", "54.1"], ["CSA rover peak", "41.2", "44.8"], ["Haworth rim", "0.3", "1.4"], ["Malapert summit", "82.6", "68.5"]].map(([s, a, n]) => (
+                    {[["Shackleton rim", "88.0", "87.1"], ["Shackleton floor", "0.0", "0.0"], ["Nobile rim", "52.9", "54.1"], ["Peak near Shackleton (CSA scenario)", "41.2", "44.8"], ["Haworth crater floor", "0.3", "1.4"], ["Malapert summit", "82.6", "68.5"]].map(([s, a, n]) => (
                       <tr key={s} className="border-t border-space-700 transition-colors hover:bg-space-800/60"><td className="py-1.5 font-sans">{s}</td><td className="text-right">{a}</td><td className="text-right">{n}</td></tr>
                     ))}
                   </tbody>

@@ -1,7 +1,7 @@
 # Space Apps 2026 — submission text (copy into the project page)
 
 > The headings below follow the official project form, in the same order (Project Submission Guide, 2026).
-> Fields marked ✏️ need your input. Everything else is ready to paste. Everything on the page and in linked material must be in English.
+> Everything below is final and ready to paste, field by field. Everything on the page and in linked material is in English.
 > Deadline: **Sunday, November 15, 11:59 pm in the time zone of your Local Event**. Submit early; you can edit and resubmit until the deadline.
 
 ---
@@ -19,13 +19,13 @@ AetherRidge is a web app that shows, for any landing site and any moment in 2026
 
 ---
 
-## Link to Project Demo ✏️
-`<public YouTube link to the 30-second video>`
+## Link to Project Demo
+https://youtu.be/eWEK2JrqiTw
 
-Use the video here (it is the stronger demo for the Presentation score). The form takes one link, so the slide deck goes in the Detailed Project Description below.
+*(30-second video with narration and English subtitles. The form takes one link; the 7-slide deck is linked in the Detailed Project Description.)*
 
 ## Link to Final Project
-https://lunar-landing-navigator-vfdm.vercel.app
+https://lunar-landing-navigator-vfdm.vercel.app/
 
 ---
 
@@ -34,10 +34,11 @@ https://lunar-landing-navigator-vfdm.vercel.app
 **Links**
 * Live app (no login): https://lunar-landing-navigator-vfdm.vercel.app
 * Source code, data pipeline and validation: https://github.com/qinchanpang-afk/lunar-landing-navigator
-* 30-second demo video: ✏️ `<YouTube link>`
-* 7-slide deck (PDF): ✏️ `<public link to the exported PDF>`
+* 30-second demo video: https://youtu.be/eWEK2JrqiTw
+* 7-slide deck (PDF): https://github.com/qinchanpang-afk/lunar-landing-navigator/blob/main/docs/AetherRidge_slides.pdf
 
 ### What it does
+* **Landing page**: the problem, key results and a scroll-driven explainer (the Sun moving behind a ridge switches power off), with one-click entry into the navigator.
 * **3D terrain with live shadows**: real LOLA terrain around the site, rendered in 3D and lit by the Sun at the chosen time, with the 100 km skyline ring that decides power at the site.
 * **First-screen answer**: "Is there power? Is there a link to Earth? For how long?" answered at a glance, with one-click demo scenarios.
 * **360° horizon panorama and sky dome**: the real skyline from LOLA altimetry, with the Sun and Earth at their apparent positions and ±15-day tracks (Earth's libration loop is visible).
@@ -71,7 +72,7 @@ https://lunar-landing-navigator-vfdm.vercel.app
    * A compressed 80 m/160 m tile pyramid of the same DEM is ray-traced in the browser, within 0.1 percentage point of the full pipeline.
    * The nearby scan rotates the site's Sun and Earth directions into each grid point's local frame.
    * An independent Horizons query at the best Nobile cell confirmed the result (77.5 % vs 77.5 %).
-5. **Validation.** Automated checks run on every build (9/9 pass):
+5. **Validation.** Automated checks run each time the data pipeline runs (9/9 pass):
    * Apollo 11 has 14.78-day days and the Sun reaches 89.9°.
    * Chang'e-6 on the far side has 0 % DTE.
    * Shackleton's floor is 0 % lit while its rim is 88 %.
@@ -148,7 +149,7 @@ It also proposed optional feature extensions (map, best-nearby-spot scan, missio
 ## Space Agency Partner Data and Other References
 
 **Space Agency Partner**
-* **Canadian Space Agency (CSA)**: the Moon exploration portal, https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/. Its coverage of the Canadian utility rover programme and Canada's role in Artemis informed the "Peak Near Shackleton (CSA Rover Target)" scenario. No CSA dataset is ingested directly.
+* **Canadian Space Agency (CSA)**: the Moon exploration portal, https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/. Its coverage of the Canadian utility rover programme and Canada's role in Artemis informed the illustrative "Peak Near Shackleton (CSA Rover Scenario)" site. CSA has not published a landing site, so this point is a scenario, not an official target. No CSA dataset is ingested directly.
 
 **Literature**
 * Smith, D. E. et al. (2010). The Lunar Orbiter Laser Altimeter investigation on the Lunar Reconnaissance Orbiter mission. *Space Science Reviews* 150, 209–241.
@@ -209,8 +210,8 @@ It is rendered by `video/record.mjs`, `video/mix.py` and `video/edit.py` (local 
 
 ## Final checklist ✏️
 - [ ] Your team is a confirmed participant (not waitlisted) at your Local Event.
-- [ ] Demo video (≤ 30 s, English subtitles) uploaded to YouTube as Public or Unlisted. The link is pasted into **Link to Project Demo**.
-- [ ] Slide deck exported to PDF and shared as "Anyone with the link" (e.g. Google Drive). The link is pasted into the Detailed Project Description.
+- [x] Demo video (30 s, English subtitles) on YouTube, opens without login: https://youtu.be/eWEK2JrqiTw
+- [x] Slide deck as a public PDF in the GitHub repo: https://github.com/qinchanpang-afk/lunar-landing-navigator/blob/main/docs/AetherRidge_slides.pdf
 - [ ] Every link opens in a private/incognito window without login: the app, GitHub, YouTube and the PDF.
 - [ ] Optional: request a FortiGuard Web Filter classification for the vercel.app site (category: Education or Web-based Application; Company Name: N/A), so judges on filtered networks can open it.
 - [ ] All fields filled from this document: Summary, Demo, Final Project, Detailed Description, Use of SI, NASA Data, Space Agency Partner Data and Other References.

@@ -467,7 +467,7 @@ def build_site(site, dem, offline):
     if slope is not None and slope > MAX_LANDER_SLOPE_DEG:
         warnings.append(f"Local slope {slope:.1f} deg exceeds typical lander tolerance ({MAX_LANDER_SLOPE_DEG:.0f} deg)")
     if snap_info and not snap_info.get("applied", True):
-        msg = (f"Official coordinates used as given (no closed local summit within {snap_info['radius_km']} km)")
+        msg = (f"Team-supplied coordinates used as given (no closed local summit within {snap_info['radius_km']} km)")
         if slope is not None and slope > MAX_LANDER_SLOPE_DEG:
             msg += "; site sits on a steep slope - coordinates pending verification"
         warnings.append(msg)
@@ -620,7 +620,7 @@ def print_report(report: dict, index: list[dict]) -> None:
     for s in index:
         sn = s.get("snap")
         if sn and not sn.get("applied", True):
-            log(f'  {s["id"]:18s} not applied (extremum on {sn["radius_km"]} km edge) - official coords '
+            log(f'  {s["id"]:18s} not applied (extremum on {sn["radius_km"]} km edge) - team-supplied coords '
                 f'({s["lat"]}, {s["lon"]}) kept')
         elif sn:
             log(f'  {s["id"]:18s} {sn["mode"]:3s} {sn["shift_km"]:6.2f} km @ {sn["bearing_deg"]:5.1f} deg: '

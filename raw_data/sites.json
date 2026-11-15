@@ -57,31 +57,31 @@
       "mode": "max",
       "radius_km": 0.5,
       "keep_catalog_on_edge": true,
-      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+      "note": "fine snap to local high point; keep team-supplied coords if no closed summit within 0.5 km"
     },
-    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+    "coord_source": "coordinates supplied by the project team (2026-11-15)"
   },
   {
     "id": "haworth-rim",
-    "name": "Haworth Rim (Artemis III Candidate)",
-    "agency": "NASA Artemis III candidate region (Oct 2024)",
+    "name": "Haworth Crater Floor (near centre)",
+    "agency": "Inside Haworth crater, ~3 km from its centre. NASA's Artemis III Haworth candidate region (Oct 2024) is on the crater rim, not at this point",
     "region": "South Pole",
     "lat": -86.85,
     "lon": 354.5,
     "elev_km": 1.4,
-    "description": "Elevated terrain bordering Haworth Crater, exhibiting dramatic seasonal variations in solar elevation and terrain shadowing.",
+    "description": "Floor of Haworth crater near its centre, ringed by walls up to 21 deg high: a near-permanently shadowed cold-trap reference, shown for contrast with lit rim and ridge sites.",
     "snap": {
       "mode": "max",
       "radius_km": 0.5,
       "keep_catalog_on_edge": true,
-      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+      "note": "fine snap to local high point; keep team-supplied coords if no closed summit within 0.5 km"
     },
-    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+    "coord_source": "coordinates supplied by the project team (2026-11-15)"
   },
   {
     "id": "csa-rover-zone",
-    "name": "Peak Near Shackleton (CSA Rover Target)",
-    "agency": "Canadian Space Agency (CSA) Partner",
+    "name": "Peak Near Shackleton (CSA Rover Scenario)",
+    "agency": "Illustrative scenario for Canada's lunar rover plans (CSA, Space Apps partner). CSA has not published a landing site",
     "region": "South Pole",
     "lat": -88.78,
     "lon": 291.3,
@@ -91,9 +91,9 @@
       "mode": "max",
       "radius_km": 0.5,
       "keep_catalog_on_edge": true,
-      "note": "fine snap to local high point; keep official coords if no closed summit within 0.5 km"
+      "note": "fine snap to local high point; keep team-supplied coords if no closed summit within 0.5 km"
     },
-    "coord_source": "official coordinates supplied by project team (2026-11-15)"
+    "coord_source": "coordinates supplied by the project team (2026-11-15)"
   },
   {
     "id": "change-6",

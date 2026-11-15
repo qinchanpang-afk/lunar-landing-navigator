@@ -4,7 +4,7 @@
 
 *NASA Space Apps Challenge 2026 · Challenge: Lunar Landing Site Navigator · Team: **Akasha Solo***
 
-**Live app: <https://lunar-landing-navigator-vfdm.vercel.app>** · Example deep link: [Nobile rim vs. a 14-day launch slip](https://lunar-landing-navigator-vfdm.vercel.app/?site=nobile-rim&t=2026-11-30T06:00Z&view=compare&cmp=nobile-rim,nobile-rim~o336)
+**Live app: <https://lunar-landing-navigator-vfdm.vercel.app>** · **30-second demo video: <https://youtu.be/eWEK2JrqiTw>** · **7-slide deck: [docs/AetherRidge_slides.pdf](docs/AetherRidge_slides.pdf)** · Example deep link: [Nobile rim vs. a 14-day launch slip](https://lunar-landing-navigator-vfdm.vercel.app/?site=nobile-rim&t=2026-11-30T06:00Z&view=compare&cmp=nobile-rim,nobile-rim~o336)
 
 Missions to the lunar south pole face extreme lighting and communication constraints. The Sun circles the horizon instead of rising overhead. A ridge a few hundred metres high can cast a shadow for days. Earth wobbles up and down around the skyline. Existing tools (QuickMap, Moon Trek, JPL Horizons) are powerful but slow to use for a quick question like *"what happens to power and Direct-to-Earth (DTE) comms if we land 13 km away, or launch two weeks late?"*
 
@@ -45,12 +45,12 @@ This app answers that interactively, from precomputed data with no API latency. 
 | Shackleton Crater Floor (PSR) | **0.0 %** | 0.0 % | 0.0 % | whole period | Permanently shadowed cold trap |
 | Malapert Massif summit | 82.6 % | **96.4 %** | 79.7 % | 276 h | Near-continuous Earth view |
 | Nobile Western Rim (VIPER target, Mons Mouton) | 52.9 % | 66.0 % | 31.6 % | 522 h | |
-| Haworth Rim (Artemis III candidate) † | 0.3 % | 0.0 % | 0.0 % | 8472 h | 19° pole-facing slope (see *Data quality*) |
-| Peak near Shackleton (CSA rover target) † | 41.2 % | 51.4 % | 19.6 % | 348 h | 11° slope (see *Data quality*) |
+| Haworth crater floor, near centre † | 0.3 % | 0.0 % | 0.0 % | 8472 h | Cold-trap reference inside the crater; NASA's Artemis III *Haworth* region is on the rim, not here. 19° local slope |
+| Peak near Shackleton (CSA rover scenario) † | 41.2 % | 51.4 % | 19.6 % | 348 h | Illustrative point; CSA has not published a landing site. 11° slope |
 | Chang'e-6, Apollo Basin (far side) | 50.3 % | **0.0 %** | 0.0 % | 360 h | Earth always 33–52° below horizon |
 | Apollo 11, Mare Tranquillitatis | 49.7 % | 100 % | 49.7 % | 356 h | 14.78-day daylight periods, Sun up to 89.9° |
 
-† Official coordinates used as given; flagged in the app as *pending verification*.
+† Team-supplied coordinates used as given (no DEM snapping); flagged in the app as *pending verification*. The Haworth point lies about 3 km from the crater's centre (86.9°S, 4°W; 51 km wide), i.e. on its floor, so it is labelled as a floor reference rather than a rim landing site.
 
 **A few hundred metres matter as much as the region.** The *Best nearby spot* scan around the Nobile rim coordinates finds a lander-safe cell (5° slope) **2.15 km SW** with **77.5 %** sunlight instead of 52.9 %, and a longest shadow of 11 days instead of 22. A full run at that point with its own live Horizons ephemeris confirms 77.5 %.
 
@@ -154,7 +154,7 @@ From the Moon, Earth barely moves: the Moon's rotation is locked to its orbit. I
 | Shackleton floor | 0.0 % | 0.0 % | 0.0 % | 0.0 % | 0.0 % | 0.0 % |
 | Malapert summit | 82.6 % | 59.8 % | 68.5 % | 96.4 % | 74.6 % | 100 % |
 | Nobile rim | 52.9 % | 45.9 % | 54.1 % | 66.0 % | 65.0 % | 84.5 % |
-| Haworth rim | 0.3 % | 1.2 % | 1.4 % | 0.0 % | 0.0 % | 0.0 % |
+| Haworth floor | 0.3 % | 1.2 % | 1.4 % | 0.0 % | 0.0 % | 0.0 % |
 | CSA peak | 41.2 % | 38.4 % | 44.8 % | 51.4 % | 56.9 % | 57.3 % |
 
 The definitions differ (18.6 years vs 2026–27; any part of the disc vs disc centre; ground vs 2 m mast; 60 m vs 80 m DEM), and on sharp summits a few tens of metres of position change the value a lot, so the local best within 150 m is the fairer comparison. Permanent shadow and the steep Haworth site agree at 0–1 %; Shackleton rim, Nobile and the CSA peak agree within a few points of the local best. Malapert sunlight remains higher in our 2-year, 2 m-mast run (82.6 % vs at most 77.6 % within 600 m in NASA's map), which we report rather than tune away.
@@ -292,7 +292,7 @@ In line with the Space Apps rules on SI use:
 
 * **NASA Lunar Reconnaissance Orbiter, Lunar Orbiter Laser Altimeter (LOLA)**: the `LDEM_80S_80M` polar digital elevation model (LRO-L-LOLA-4-GDR-V1.0), produced by the LOLA Science Team at NASA Goddard Space Flight Center and distributed through the NASA Planetary Data System (PDS) Geosciences Node.
 * **NASA Jet Propulsion Laboratory, Solar System Dynamics Group: Horizons System**: Sun and Earth topocentric ephemerides (DE441) for every lunar site, via the Horizons REST API.
-* **Canadian Space Agency (CSA)**: Space Apps 2026 partner agency. Its Moon exploration resources (<https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/>), including the Canadian utility rover programme and Canada's role in Artemis, informed the CSA rover-target scenario used in this app.
+* **Canadian Space Agency (CSA)**: Space Apps 2026 partner agency. Its Moon exploration resources (<https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/>), including the Canadian utility rover programme and Canada's role in Artemis, informed the illustrative CSA rover scenario (a peak near Shackleton) used in this app. CSA has not published a landing site, so the point is a scenario, not an official target.
 * **NASA Space Apps Challenge** organisers, for the *Lunar Landing Site Navigator* challenge and its curated resources.
 
 Built with Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow) and Vite + React + TypeScript + Tailwind CSS + Recharts + three.js + Lucide.
