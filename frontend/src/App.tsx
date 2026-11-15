@@ -237,7 +237,9 @@ export default function App() {
       <header className="sticky top-0 z-20 border-b border-space-700 bg-space-950/90 backdrop-blur">
         <div className="mx-auto max-w-[1600px] flex flex-wrap items-center gap-3 px-4 py-2.5">
           <div className="flex items-center gap-2">
-            <Logo size={26} />
+            <a href="/" title="AetherRidge home" aria-label="AetherRidge home" className="shrink-0">
+              <Logo size={26} />
+            </a>
             <div>
               <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">
                 AetherRidge <span className="hidden font-normal text-slate-400 min-[640px]:inline">· Sun & Earth Line-of-Sight Navigator for Lunar South Pole Landings</span>
