@@ -296,3 +296,7 @@ In line with the Space Apps rules on SI use:
 * **NASA Space Apps Challenge** organisers, for the *Lunar Landing Site Navigator* challenge and its curated resources.
 
 Built with Python (NumPy, rasterio/GDAL, pyproj, requests, Pillow) and Vite + React + TypeScript + Tailwind CSS + Recharts + three.js + Lucide.
+
+## License
+
+Code in this repository is released under the [MIT License](LICENSE). The NASA data products it uses (LOLA, Horizons, PGDA) are public NASA data and keep their own terms; see [Data sources](#data-sources).
